@@ -9,7 +9,7 @@ import { useCart } from "../context/CartContext";
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const { cartCount } = useCart();
+  const { cartCount, totalPrice } = useCart();
 
   // منع اسكرول الصفحة عند فتح الكارت
   useEffect(() => {
@@ -19,6 +19,10 @@ export default function Navbar() {
       document.body.style.overflow = "auto";
     }
   }, [cartOpen]);
+
+  useEffect(() => {
+    console.log("Cart count updated:", cartCount);
+  }, [cartCount]);
 
   return (
     <>
@@ -102,7 +106,7 @@ export default function Navbar() {
                 onClick={() => setCartOpen(true)}
                 className="block text-gray-300 hover:text-white curpo"
               >
-                Cart ({cartCount})
+                Cart {cartCount}
               </button>
             </div>
           )}
@@ -141,7 +145,7 @@ export default function Navbar() {
             </p>
           ) : (
             <div className="bg-white/5 p-4 rounded-2xl border border-white/10 hover:bg-white/10 transition">
-              <CartProducts cartCount={cartCount} />
+              <CartProducts />
             </div>
           )}
         </div>
@@ -150,7 +154,7 @@ export default function Navbar() {
         <div className="absolute bottom-0 w-full p-6 border-t border-white/10 bg-black/40 backdrop-blur-xl">
           <div className="flex justify-between text-gray-300 mb-4">
             <span>Total</span>
-            <span>$99</span>
+            <span>${totalPrice}</span>
           </div>
 
           <button className="w-full bg-indigo-600 hover:bg-indigo-700 transition py-3 rounded-2xl text-white font-semibold shadow-lg shadow-indigo-600/40">

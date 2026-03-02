@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
+import { useCart } from "../context/CartContext";
 
 type Product = {
   id: number;
@@ -66,48 +67,49 @@ type HomeProps = {
   cartCount: number;
 };
 
-export default function Home({ setCartCount, cartCount }: HomeProps) {
-  const [loading, setLoading] = useState(true);
+export default function Products({ setCartCount, cartCount }: HomeProps) {
+  // const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<Product[]>([]);
+  const { addToCart } = useCart();
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000); // 2s delay
-    return () => clearTimeout(timer);
-  }, []);
-  useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      try {
-        const parsedCart = JSON.parse(savedCart);
-        console.log("From useEffect", parsedCart);
-      } catch (error) {
-        console.error("Error parsing cart JSON:", error);
-      }
-    }
-  }, [cart]);
-  const addToCart = (product: Product) => {
-    setCart((prevCart) => {
-      const updatedCart = [...prevCart, product];
+  // useEffect(() => {
+  //   const timer = setTimeout(() => setLoading(false), 2000); // 2s delay
+  //   return () => clearTimeout(timer);
+  // }, []);
+  // useEffect(() => {
+  //   const savedCart = localStorage.getItem("cart");
+  //   if (savedCart) {
+  //     try {
+  //       const parsedCart = JSON.parse(savedCart);
+  //       console.log("From useEffect", parsedCart);
+  //     } catch (error) {
+  //       console.error("Error parsing cart JSON:", error);
+  //     }
+  //   }
+  // }, [cart]);
+  // const addToCart = (product: Product) => {
+  //   setCart((prevCart) => {
+  //     const updatedCart = [...prevCart, product];
 
-      // Save to localStorage using the new cart
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
+  //     // Save to localStorage using the new cart
+  //     localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-      return updatedCart;
-    });
+  //     return updatedCart;
+  //   });
 
-    // Update cart count separately (outside the setCart callback)
-    setCartCount((prevCount) => prevCount + 1);
-  };
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-900">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-          <p className="text-white mt-4">Loading App...</p>
-        </div>
-      </div>
-    );
-  }
+  //   // Update cart count separately (outside the setCart callback)
+  //   setCartCount((prevCount) => prevCount + 1);
+  // };
+  // if (loading) {
+  //   return (
+  //     <div className="flex items-center justify-center h-screen bg-gray-900">
+  //       <div className="flex flex-col items-center">
+  //         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+  //         <p className="text-white mt-4">Loading App...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>
@@ -146,15 +148,7 @@ export default function Home({ setCartCount, cartCount }: HomeProps) {
                 <div className="flex justify-center items-center gap-5">
                   {" "}
                   <button
-                    onClick={() =>
-                      addToCart({
-                        id: 1,
-                        name: "Laptop",
-                        description: "Great laptop",
-                        price: 1500,
-                        image: "/adver8.jpg",
-                      })
-                    }
+                    onClick={() => addToCart(product)}
                     className="mt-6 w-full py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition text-white font-semibold shadow-lg shadow-indigo-600/30 cursor-pointer flex items-center justify-center gap-2"
                   >
                     Add to Cart <FaShoppingCart />
