@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import Navbar from "./Components/Navbar";
+import Products from "./Components/Products";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
+  const [cartCount, setCartCount] = useState(0);
+
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000); // 2s delay
+    const timer = setTimeout(() => setLoading(false), 1000); // 2s delay
     return () => clearTimeout(timer);
   }, []);
 
@@ -22,61 +25,8 @@ export default function Home() {
 
   return (
     <div>
-      <Navbar />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+      <Navbar cartCount={cartCount} />
+      <Products cartCount={cartCount} setCartCount={setCartCount} />
     </div>
   );
 }

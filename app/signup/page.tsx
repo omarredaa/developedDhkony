@@ -1,10 +1,10 @@
 "use client";
 
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, MapPin, IdCard } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,11 +36,10 @@ export default function LoginPage() {
         bg-white/10
         backdrop-blur-2xl
         border border-white/20
-        shadow-2xl
-      "
+        shadow-2xl"
       >
         <h2 className="text-3xl font-bold text-white text-center mb-6">
-          Welcome Back
+          Create Account
         </h2>
 
         <form className="space-y-5">
@@ -50,6 +49,16 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Email address"
+              className="bg-transparent outline-none px-3 w-full text-white placeholder-gray-400"
+            />
+          </div>
+
+          {/* Roll Number */}
+          <div className="flex items-center bg-white/10 border border-white/20 rounded-xl px-4 py-3">
+            <IdCard size={18} className="text-gray-400" />
+            <input
+              type="text"
+              placeholder="name"
               className="bg-transparent outline-none px-3 w-full text-white placeholder-gray-400"
             />
           </div>
@@ -64,29 +73,42 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Forgot Password */}
-          <div className="text-right text-sm">
-            <Link href="#" className="text-indigo-400 hover:text-indigo-300">
-              Forgot password?
-            </Link>
+          {/* Location */}
+          <div className="flex items-center bg-white/10 border border-white/20 rounded-xl px-4 py-3">
+            <MapPin size={18} className="text-gray-400" />
+            <input
+              type="text"
+              placeholder="Location"
+              className="bg-transparent outline-none px-3 w-full text-white placeholder-gray-400"
+            />
           </div>
 
-          {/* Login Button */}
+          {/* Verification (e.g., code input) */}
+          <div className="flex items-center bg-white/10 border border-white/20 rounded-xl px-4 py-3">
+            <Lock size={18} className="text-gray-400" />
+            <input
+              type="text"
+              placeholder="Verification Code"
+              className="bg-transparent outline-none px-3 w-full text-white placeholder-gray-400"
+            />
+          </div>
+
+          {/* Signup Button */}
           <button
             type="submit"
             className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition text-white font-semibold shadow-lg shadow-indigo-600/30"
           >
-            Login
+            Sign Up
           </button>
 
-          {/* Register */}
+          {/* Already have account */}
           <p className="text-center text-gray-400 text-sm">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <Link
-              href="/signup"
+              href="/login"
               className="text-indigo-400 hover:text-indigo-300"
             >
-              Register
+              Login
             </Link>
           </p>
         </form>
