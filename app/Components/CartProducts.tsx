@@ -2,6 +2,7 @@
 import { useCart } from "@/app/context/CartContext";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { Truck } from "lucide-react";
+import { FaTruckFast } from "react-icons/fa6";
 
 export default function CartProducts() {
   const { cart, removeFromCart, changeQuantity, totalPrice } = useCart();
@@ -18,55 +19,102 @@ export default function CartProducts() {
     <div>
       <div className="h-2 w-full bg-linear-to-r from-[#c0bfbf] via-[#8b8b8b] to-[#000000] rounded-full mb-4"></div>
       <div className="flex justify-evenly items-center pb-8 gap-24">
-        <Truck size={20} color="#000000" strokeWidth={2.5} />
+        <p className="text-black text-2xl">
+          <FaTruckFast />
+        </p>
         <p className="text-gray-700 font-bold">قيمة الشحن مجانية الآن</p>
       </div>
       {cart.map((item) => (
-        <div
-          key={item.id}
-          className="flex items-center rounded-lg p-4 mb-4 shadow transition-all duration-300 hover:scale-[1.02]"
-        >
-          <button
-            onClick={() => removeFromCart(item.id)}
-            className="text-red-500 transition hover:scale-125 cursor-pointer"
-          >
-            <TrashIcon className="w-6 h-6" />
-          </button>
+        <div key={item.id}>
+          <div className="flex items-center rounded-lg mb-4  text-center">
+            <button
+              onClick={() => removeFromCart(item.id)}
+              className="text-[#303030] cursor-pointer"
+            >
+              <TrashIcon className="w-5 h-5" />
+            </button>
 
-          <div className="ml-4 flex-1">
-            <h3 className="text-white font-semibold">{item.name}</h3>
-            <p className="text-green-400">
-              ${item.price * (item.quantity || 1)}
-            </p>
+            <div className="ml-4 flex-1 px-5 flex flex-col justify-center items-center gap-1">
+              <h3 className="text-black font-semibold">{item.name}</h3>
+              <div className="flex justify-center items-center gap-5">
+                {" "}
+                <p className="text-[#e94b4b]">
+                  ${item.price * (item.quantity || 1)}
+                </p>
+                <p className="text-[#B0ABA8] line-through text-sm">
+                  ${item.oldPrice}
+                </p>
+              </div>
 
-            <div className="flex items-center mt-2">
-              <button
-                onClick={() => changeQuantity(item.id, -1)}
-                className="px-2 bg-gray-700 rounded cursor-pointer"
-              >
-                –
-              </button>
-              <span className="mx-3">{item.quantity}</span>
-              <button
-                onClick={() => changeQuantity(item.id, 1)}
-                className="px-2 bg-gray-700 rounded cursor-pointer"
-              >
-                +
+              <div className="flex justify-center items-center mt-2">
+                <button
+                  onClick={() => changeQuantity(item.id, -1)}
+                  className="px-1 bg-[#b0aba8] text-xl rounded cursor-pointer"
+                >
+                  –
+                </button>
+                <span className="mx-3 text-black">{item.quantity}</span>
+                <button
+                  onClick={() => changeQuantity(item.id, 1)}
+                  className="px-1 bg-[#b0aba8] text-xl rounded cursor-pointer"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <img
+              src={item.image}
+              alt={item.name}
+              width={70}
+              className="rounded-md"
+            />
+          </div>
+          <hr className="text-gray-300 mt-7" />
+        </div>
+      ))}
+      <div>
+        <div className="w-full max-w-md mx-auto rounded-xl p-4" dir="rtl">
+          {/* Amount before discount */}
+          <div className="flex justify-between text-gray-700 mb-2">
+            <span className="font-medium">المبلغ قبل الخصم:</span>
+            <span>5000 ر.س</span>
+          </div>
+
+          {/* Total including tax */}
+          <div className="flex justify-between text-gray-900 font-bold pt-2">
+            <span>
+              الإجمالي:{" "}
+              <span className="text-sm font-normal text-gray-600">
+                شامل الضريبة %15
+              </span>
+            </span>
+            <span>{totalPrice.toFixed(2)} ر.س </span>
+          </div>
+          <div className="w-full max-w-md mx-auto space-y-4" dir="rtl">
+            <div className="w-full max-w-md mx-auto mt-10" dir="rtl">
+              <div className="flex rounded-lg overflow-hidden border border-dashed border-gray-400 h-16">
+                {/* Coupon Input */}
+                <input
+                  type="text"
+                  placeholder="هل لديك كوبون؟"
+                  className="flex-1 px-3 py-2 text-right focus:outline-none text-black placeholder:text-black w-[80%]"
+                />
+
+                {/* Apply Button */}
+                <button className="bg-[#B0ABA8] text-white px-4 py-2 hover:bg-black transition  w-[40%] font-extrabold cursor-pointer">
+                  تطبيق
+                </button>
+              </div>
+
+              {/* Complete Order Button */}
+              <button className="w-full flex items-center justify-center gap-2 bg-[#2e2727] text-white font-semibold py-3 rounded-xl mt-4 text-2xl cursor-pointer">
+                <span>إتمام الطلب</span>
+                <FaTruckFast />
               </button>
             </div>
           </div>
-
-          <img
-            src={item.image}
-            alt={item.name}
-            width={100}
-            height={100}
-            className="rounded-md"
-          />
         </div>
-      ))}
-      <div className="text-right text-2xl font-bold text-green-400 mt-6">
-        Total: ${totalPrice}
       </div>
     </div>
   );

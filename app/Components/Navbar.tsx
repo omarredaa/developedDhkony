@@ -14,9 +14,14 @@ import CartProducts from "./CartProducts";
 import { useCart } from "../context/CartContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 
-export default function Navbar() {
+export default function Navbar({
+  cartOpen,
+  setCartOpen,
+}: {
+  cartOpen: boolean;
+  setCartOpen: (value: boolean) => void;
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const { cartCount, totalPrice } = useCart();
 
   // منع اسكرول الصفحة عند فتح الكارت
@@ -43,7 +48,7 @@ export default function Navbar() {
             >
               <ShoppingCart size={30} className=" transition" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full shadow-lg shadow-indigo-600/40">
+                <span className="absolute -top-2 -right-2 bg-mist-800 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full shadow-lg shadow-indigo-600/40">
                   {cartCount}
                 </span>
               )}
@@ -133,7 +138,7 @@ export default function Navbar() {
 
       {/* Cart Drawer */}
       <div
-        className={`fixed top-0 left-0 h-full w-[400px] bg-white backdrop-blur-2xl border-r border-white/20 shadow-2xl z-50 transform transition-transform duration-300 rounded-3xl ${
+        className={`fixed top-0 left-0 h-full w-[300px] md:w-[400px] bg-white backdrop-blur-2xl border-r border-white/20 shadow-2xl z-50 transform transition-transform duration-300 rounded-3xl ${
           cartOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -159,18 +164,6 @@ export default function Navbar() {
             </div>
           )}
         </div>
-
-        {/* Footer */}
-        {/* <div className="absolute bottom-0 w-full p-6 border-t border-white/10 bg-black/40 backdrop-blur-xl">
-          <div className="flex justify-between text-gray-300 mb-4">
-            <span>Total</span>
-            <span>${totalPrice}</span>
-          </div>
-
-          <button className="w-full bg-indigo-600 hover:bg-indigo-700 transition py-3 rounded-2xl text-white font-semibold shadow-lg shadow-indigo-600/40">
-            Checkout
-          </button>
-        </div> */}
       </div>
     </>
   );

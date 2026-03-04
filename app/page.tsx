@@ -4,13 +4,15 @@ import Navbar from "./Components/Navbar";
 import Products from "./Components/Products";
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
-  // const [cartCount, setCartCount] = useState(0);
+  const [cartOpen, setCartOpen] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000); // 2s delay
-    return () => clearTimeout(timer);
-  }, []);
+  // const [loading, setLoading] = useState(true);
+  // // const [cartCount, setCartCount] = useState(0);
+
+  // useEffect(() => {
+  //   const timer = setTimeout(() => setLoading(false), 1000); // 2s delay
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   // if (loading) {
   //   return (
@@ -25,8 +27,8 @@ export default function Home() {
 
   return (
     <div>
-      <Navbar />
-      <Products />
+      <Navbar cartOpen={cartOpen} setCartOpen={setCartOpen} />
+      <Products setCartOpen={setCartOpen} />
     </div>
   );
 }
