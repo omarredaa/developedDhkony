@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { CartProvider } from "./context/CartContext";
 import { Cairo } from "next/font/google";
+import { ProductsProvider } from "./context/ProductsContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,9 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased ${cairo.variable} font-sans bg-[#1e1e1e] text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased ${cairo.variable} font-sans `}
       >
-        <CartProvider>{children}</CartProvider>
+        <ProductsProvider>
+          <CartProvider>{children}</CartProvider>{" "}
+        </ProductsProvider>
       </body>
     </html>
   );

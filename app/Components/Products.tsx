@@ -2,9 +2,8 @@
 import { useEffect, useState } from "react";
 import { FaEye, FaShoppingCart } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
-import { Eye } from "lucide-react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectedProducts from "./SelectedProducts";
+import Link from "next/link";
 
 type Product = {
   id: number;
@@ -101,7 +100,7 @@ export default function Products({ setCartOpen }: HomeProps) {
   // const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
+  // let navigate = useNavigate();
   useEffect(() => {
     if (selectedProduct) {
       document.body.style.overflow = "hidden";
@@ -115,7 +114,7 @@ export default function Products({ setCartOpen }: HomeProps) {
       <div className="min-h-screen bg-[#f9f5f2] text-black px-6 py-12 mt-16">
         <h1 className="text-3xl font-bold  text-center mb-10">منتجاتنا</h1>
 
-        <div className="flex justify-center items-center flex-wrap gap-8">
+        <div className="flex justify-center items-center flex-wrap gap-8 ">
           {products.map((product) => {
             // ⭐ Auto Discount Calculation
             const discount = product.oldPrice
@@ -133,11 +132,13 @@ export default function Products({ setCartOpen }: HomeProps) {
               >
                 {/* Image Section */}
                 <div className="relative h-80 w-full overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500  rounded-bl-3xl cursor-pointer group-hover:scale-105"
-                  />
+                  <Link href={`/selectedProductDetailsPage/${product.id}`}>
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-500  rounded-bl-3xl cursor-pointer group-hover:scale-105"
+                    />
+                  </Link>
 
                   {/* Auto Discount Badge */}
                   {discount > 0 && (

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "./Components/Navbar";
 import Products from "./Components/Products";
+import { BrowserRouter } from "react-router-dom";
 
 export default function Home() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -27,8 +28,10 @@ export default function Home() {
 
   return (
     <div>
-      <Navbar cartOpen={cartOpen} setCartOpen={setCartOpen} />
-      <Products setCartOpen={setCartOpen} />
+      <BrowserRouter>
+        <Navbar cartOpen={cartOpen} setCartOpen={setCartOpen} />
+        <Products setCartOpen={setCartOpen} />
+      </BrowserRouter>
     </div>
   );
 }
