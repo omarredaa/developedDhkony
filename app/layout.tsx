@@ -5,6 +5,7 @@ import "./globals.css";
 import { CartProvider } from "./context/CartContext";
 import { Cairo } from "next/font/google";
 import { ProductsProvider } from "./context/ProductsContext";
+import { AuthProvider } from "./context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,9 +37,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased ${cairo.variable} font-sans `}
       >
-        <ProductsProvider>
-          <CartProvider>{children}</CartProvider>{" "}
-        </ProductsProvider>
+        <AuthProvider>
+          <ProductsProvider>
+            <CartProvider>{children}</CartProvider>{" "}
+          </ProductsProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -9,11 +9,13 @@ export type Product = {
   price: number;
   image: string;
   quantity: number;
+  rating: { rate: number; count: number };
 };
 
 type ProductsContextType = {
   products: Product[];
   loading: boolean;
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 };
 
 const ProductsContext = createContext<ProductsContextType | null>(null);
@@ -29,7 +31,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
       setProducts(JSON.parse(storedProducts));
       setLoading(false);
     } else {
-      fetch("https://f075e3bea034bf.lhr.life/api/Products")
+      fetch("https://fakestoreapi.com/products")
         .then((res) => res.json())
         .then((data) => {
           setProducts(data);
@@ -40,7 +42,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <ProductsContext.Provider value={{ products, loading }}>
+    <ProductsContext.Provider value={{ products, setProducts, loading }}>
       {children}
     </ProductsContext.Provider>
   );

@@ -1,10 +1,12 @@
 "use client";
 
-import { LayoutDashboard, Package, BarChart3 } from "lucide-react";
+import { LayoutDashboard, Package, BarChart3, CirclePlus } from "lucide-react";
 import { useState } from "react";
 import DashboardComponent from "../Components/dashboardComponents/DashboardComponent";
 import ProductEditing from "../Components/dashboardComponents/ProductEditing";
 import AnalysticComponent from "../Components/dashboardComponents/AnalysticComponent";
+import EditingSpecificProduct from "../Components/dashboardComponents/EditingSpecificProduct";
+import AddProduct from "../Components/dashboardComponents/AddProduct";
 
 export default function Dashboard() {
   const [openedSection, setOpenedSection] = useState("dashboard");
@@ -24,6 +26,12 @@ export default function Dashboard() {
             <LayoutDashboard size={18} /> Dashboard
           </a>
           <a
+            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "addproduct" ? "text-indigo-400" : ""}`}
+            onClick={() => setOpenedSection("addproduct")}
+          >
+            <CirclePlus /> Add product
+          </a>
+          <a
             className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "products" ? "text-indigo-400" : ""}`}
             onClick={() => setOpenedSection("products")}
           >
@@ -39,8 +47,12 @@ export default function Dashboard() {
       </aside>
       {openedSection === "dashboard" ? (
         <DashboardComponent />
+      ) : openedSection === "addproduct" ? (
+        <AddProduct />
       ) : openedSection === "products" ? (
-        <ProductEditing />
+        <ProductEditing setOpenedSection={setOpenedSection} />
+      ) : openedSection === "EditingSpecificProduct" ? (
+        <EditingSpecificProduct />
       ) : (
         <AnalysticComponent />
       )}

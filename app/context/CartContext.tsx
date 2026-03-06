@@ -17,6 +17,10 @@ type CartContextType = {
   changeQuantity: (id: number, amount: number) => void;
   totalPrice: number;
   cartCount: number;
+  menuOpen: boolean;
+  setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  cartOpen: boolean;
+  setCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -24,6 +28,8 @@ const CartContext = createContext<CartContextType | null>(null);
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<Product[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
 
   // ✅ نقرأ localStorage بعد الماونت
   useEffect(() => {
@@ -92,6 +98,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         changeQuantity,
         totalPrice,
         cartCount,
+        setMenuOpen,
+        menuOpen,
+        cartOpen,
+        setCartOpen,
       }}
     >
       {children}

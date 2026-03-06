@@ -1,6 +1,7 @@
 "uce client";
 import React, { useEffect, useState } from "react";
 import { Package, TrendingUp, Users, ShoppingCart } from "lucide-react";
+import { useAuth } from "@/app/context/AuthContext";
 
 const stats = [
   { title: "Total Sales", value: "$12,430", icon: TrendingUp },
@@ -35,6 +36,7 @@ const products = [
 
 export default function DashboardComponent() {
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000); // 2s delay
@@ -58,7 +60,7 @@ export default function DashboardComponent() {
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-3xl font-bold">Dashboard Overview</h1>
         <div className="bg-indigo-600 px-4 py-2 rounded-xl shadow-lg">
-          Admin Panel
+          {(user && `Welcome, ${user.email}`) || "Welcome!"}
         </div>
       </div>
 

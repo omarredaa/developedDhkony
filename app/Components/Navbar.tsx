@@ -13,17 +13,17 @@ import {
 import CartProducts from "./CartProducts";
 import { useCart } from "../context/CartContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useAuth } from "../context/AuthContext";
 
-export default function Navbar({
-  cartOpen,
-  setCartOpen,
-}: {
-  cartOpen: boolean;
-  setCartOpen: (value: boolean) => void;
-}) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { cartCount, totalPrice } = useCart();
-
+export default function Navbar() {
+  const {
+    cartCount,
+    totalPrice,
+    menuOpen,
+    setMenuOpen,
+    cartOpen,
+    setCartOpen,
+  } = useCart();
   // منع اسكرول الصفحة عند فتح الكارت
   useEffect(() => {
     if (cartOpen) {
@@ -33,9 +33,11 @@ export default function Navbar({
     }
   }, [cartOpen]);
 
-  useEffect(() => {
-    console.log("Cart count updated:", cartCount);
-  }, [cartCount]);
+  const { user, logout } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  // useEffect(() => {
+  //   console.log("Cart count updated:", cartCount);
+  // }, [cartCount]);
 
   return (
     <>
@@ -53,15 +55,38 @@ export default function Navbar({
                 </span>
               )}
             </button>
+
             <div className="hidden md:flex justify-between items-center">
-              <Link
-                href="/login"
-                className="flex items-center gap-2  transition"
-              >
-                تسجيل الدخول
-                <User size={16} color="#000000" strokeWidth={2.75} />
-              </Link>
-              <LanguageSwitcher />
+              {user?.role === "Admin" && (
+                <div className="relative">
+                  <div
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="flex justify-center items-center gap-2 cursor-pointer"
+                  >
+                    <User size={16} color="#000000" strokeWidth={2.75} />
+                    Admin : {user ? user.email : "تسجيل الدخول"}
+                  </div>
+
+                  {isOpen && (
+                    <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg border">
+                      {user ? (
+                        <button
+                          onClick={logout}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                          Sign Out
+                        </button>
+                      ) : (
+                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
+                          Login
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* <LanguageSwitcher /> */}
               <Link
                 href="/dashboard"
                 className="flex items-center gap-2  transition"
@@ -78,7 +103,6 @@ export default function Navbar({
                 />
               </div>
             </div>
-
             {/* Desktop Right Section */}
             <div className="flex items-center gap-6">
               {/* Cart Button */}
@@ -87,7 +111,6 @@ export default function Navbar({
                 <img src="/logo.png" alt="Logo" className="h-32 w-auto " />
               </Link>
             </div>
-
             {/* Mobile Menu Button */}
             <button
               className="md:hidden text-black cursor-pointer font-bold"

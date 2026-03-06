@@ -4,6 +4,7 @@ import { FaEye, FaShoppingCart } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import SelectedProducts from "./SelectedProducts";
 import Link from "next/link";
+import { useProducts } from "../context/ProductsContext";
 
 type Product = {
   id: number;
@@ -16,89 +17,11 @@ type Product = {
   rating: number;
   images?: string[]; // Optional array for multiple images
 };
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: "اقوي عرض 2",
-    description: "Noise-cancelling over-ear headphones.",
-    price: 495.0,
-    oldPrice: 1238.0,
-    discount: 1238.0,
-    image: "p1.jpg",
-    images: ["p1.jpg", "adver1.jpg", "adver2.jpg"],
-    rating: 2,
-  },
-  {
-    id: 2,
-    name: "Smart Watch",
-    description: "Track fitness, heart rate, and notifications.",
-    price: 90,
-    image: "adver2.jpg",
-    oldPrice: 0,
-    discount: 0,
-    rating: 4,
-  },
-  {
-    id: 3,
-    name: "Gaming Mouse",
-    description: "High precision with RGB lighting.",
-    price: 45,
-    image: "adver3.jpg",
-    oldPrice: 200,
-    discount: 411,
-    rating: 4,
-  },
-  {
-    id: 4,
-    name: "Gaming Mouse",
-    description: "High precision with RGB lighting.",
-    price: 45,
-    image: "adver4.jpg",
-    oldPrice: 0,
-    discount: 0,
-    rating: 4,
-  },
-  {
-    id: 5,
-    name: "Gaming Mouse",
-    description: "High precision with RGB lighting.",
-    price: 45,
-    image: "adver5.jpg",
-    oldPrice: 0,
-    discount: 0,
-    rating: 4,
-  },
-  {
-    id: 6,
-    name: "Gaming Mouse",
-    description: "High precision with RGB lighting.",
-    price: 45,
-    image: "adver6.jpg",
-    oldPrice: 0,
-    discount: 0,
-    rating: 4,
-  },
-  {
-    id: 7,
-    name: "Gaming Mouse",
-    description: "High precision with RGB lighting.",
-    price: 45,
-    image: "adver7.jpg",
-    oldPrice: 0,
-    discount: 0,
-    rating: 4,
-  },
-];
-type HomeProps = {
-  setCartCount: React.Dispatch<React.SetStateAction<number>>;
-  cartCount: number;
-  setCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-export default function Products({ setCartOpen }: HomeProps) {
+const oldPrice = 1000; // Example old price for discount calculation
+export default function Products() {
+  const { products } = useProducts();
   // const [loading, setLoading] = useState(true);
-  const { addToCart } = useCart();
+  const { addToCart, setCartOpen } = useCart();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   // let navigate = useNavigate();
   useEffect(() => {
@@ -117,10 +40,8 @@ export default function Products({ setCartOpen }: HomeProps) {
         <div className="flex justify-center items-center flex-wrap gap-8 ">
           {products.map((product) => {
             // ⭐ Auto Discount Calculation
-            const discount = product.oldPrice
-              ? Math.round(
-                  ((product.oldPrice - product.price) / product.oldPrice) * 100,
-                )
+            const discount = oldPrice
+              ? Math.round(((oldPrice - product.price) / oldPrice) * 100)
               : 0;
 
             return (
@@ -159,16 +80,20 @@ export default function Products({ setCartOpen }: HomeProps) {
                     <div className="flex justify-center mt-2 text-yellow-400 text-lg">
                       {Array.from({ length: 5 }).map((_, index) => (
                         <span key={index} className="text-2xl">
-                          {index < product.rating ? "★" : "☆"}
+                          {index < product.rating.rate ? "★" : "☆"}
                         </span>
                       ))}
                     </div>
 
                     {/* Price Section */}
                     <div className="mt-3 flex justify-center items-center gap-3">
-                      {product.oldPrice && (
+                      {product?.oldPrice ? (
                         <span className="text-gray-400 line-through text-sm">
-                          {product.oldPrice} ج.م
+                          {product?.oldPrice} ج.م
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 line-through text-sm">
+                          1000 ج.م
                         </span>
                       )}
                       <span className="text-red-500 font-bold text-lg">

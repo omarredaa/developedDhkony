@@ -5,8 +5,6 @@ import Products from "./Components/Products";
 import { BrowserRouter } from "react-router-dom";
 
 export default function Home() {
-  const [cartOpen, setCartOpen] = useState(false);
-
   // const [loading, setLoading] = useState(true);
   // // const [cartCount, setCartCount] = useState(0);
 
@@ -29,8 +27,10 @@ export default function Home() {
   return (
     <div>
       <BrowserRouter>
-        <Navbar cartOpen={cartOpen} setCartOpen={setCartOpen} />
-        <Products setCartOpen={setCartOpen} />
+        <Navbar />
+        <Products
+        // setCartOpen={setCartOpen}
+        />
       </BrowserRouter>
     </div>
   );

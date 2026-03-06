@@ -16,18 +16,17 @@ export default function ProductDetails() {
   const product = products.find((p) => p.id === Number(params.id));
   // console.log(product);
 
-  if (!product) return <NotFound />;
+  if (!product) return <p>Product not found</p>;
 
   return (
     <div className="flex justify-center items-center bg-[#f9f5f2]">
-      <Navbar />
-
       <div className="mt-32  w-full  rounded-lg p-4 flex justify-evenly items-center md:items-start flex-col md:flex-row  gap-6">
         {/* Product Image */}
         <div className="shrink-0">
           <img
             // src={product.image}
-            src={product.image}
+
+            src={"/p1.jpg"}
             alt={product.name}
             className="rounded-md object-cover w-[360px]"
           />
@@ -48,12 +47,10 @@ export default function ProductDetails() {
                 </span>
               ))}
             </div>{" "}
-            <p className="text-[#4c4645] text-sm">
-              بناءً على {product.rating.count} تقييم
-            </p>
+            <p className="text-[#4c4645] text-sm">بناءً على 1134 تقييم</p>
             {/* Availability */}
             <p
-              className={`mt-1 text-sm font-extrabold  p-5 text-white rounded-xl w-20 h-8 text-center flex justify-center items-center text-nowrap ${
+              className={`mt-1 text-sm font-extrabold  p-5 text-white rounded-xl w-16 h-8 text-center flex justify-center items-center ${
                 product.quantity > 0 ? "bg-[#6bc693]" : "bg-red-600"
               }`}
             >
@@ -74,7 +71,7 @@ export default function ProductDetails() {
           <div className="mt-3 w-full ">
             <div className="flex justify-center items-center gap-2 border border-dashed border-black rounded-xl p-3 text-sm md:text-base h-12">
               <span className="text-black font-medium">
-                يشتري هذا المنتج الآن {Math.round(product.rating.count / 4)} شخص
+                يشتري هذا المنتج الآن 1000 شخص
               </span>
               <FaEye className="text-black" />
             </div>

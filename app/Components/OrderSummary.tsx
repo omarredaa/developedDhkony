@@ -10,7 +10,11 @@ export default function CartProducts() {
   if (cart.length === 0) {
     return (
       <div className="text-center py-20 text-gray-400 text-xl font-cairo">
-        🛒 سلة المشتريات فارغة
+        <Link href="/">
+          <button className="mb-5 bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer ">
+            ضيف بعض المنتجات 🛒
+          </button>
+        </Link>{" "}
       </div>
     );
   }
@@ -93,28 +97,25 @@ export default function CartProducts() {
           </div>
           <div className="w-full max-w-md mx-auto space-y-4" dir="rtl">
             <div className="w-full max-w-md mx-auto mt-10" dir="rtl">
-              {/* <div className="flex rounded-lg overflow-hidden border border-dashed border-gray-400 h-16"> */}
-              {/* Coupon Input */}
-              {/* <input
+              <div className="flex rounded-lg overflow-hidden border border-dashed border-gray-400 h-16">
+                {/* Coupon Input */}
+                <input
                   type="text"
                   placeholder="هل لديك كوبون؟"
                   className="flex-1 px-3 py-2 text-right focus:outline-none text-black placeholder:text-black w-[80%]"
-                /> */}
+                />
 
-              {/* Apply Button */}
-              {/* <button className="bg-[#B0ABA8] text-white px-4 py-2 hover:bg-black transition  w-[40%] font-extrabold cursor-pointer">
+                {/* Apply Button */}
+                <button className="bg-[#B0ABA8] text-white px-4 py-2 hover:bg-black transition  w-[40%] font-extrabold cursor-pointer">
                   تطبيق
                 </button>
-              </div> */}
+              </div>
 
               {/* Complete Order Button */}
-              <Link href="/login">
-                {" "}
-                <button className="w-full flex items-center justify-center gap-2 bg-[#2e2727] text-white font-semibold py-3 rounded-xl mt-4 text-2xl cursor-pointer">
-                  <span>إتمام الطلب</span>
-                  <FaTruckFast />
-                </button>
-              </Link>
+              <button className="w-full flex items-center justify-center gap-2 bg-[#2e2727] text-white font-semibold py-3 rounded-xl mt-4 text-2xl cursor-pointer">
+                <span>إتمام الطلب</span>
+                <FaTruckFast />
+              </button>
             </div>
           </div>
         </div>
