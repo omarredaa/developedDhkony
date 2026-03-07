@@ -15,6 +15,7 @@ type Product = {
   oldPrice: number;
   discount: number;
   rating: number;
+  averageRating: number;
   images?: string[]; // Optional array for multiple images
 };
 const oldPrice = 1000; // Example old price for discount calculation
@@ -35,6 +36,8 @@ export default function Products() {
   return (
     <div>
       <div className="min-h-screen bg-[#f9f5f2] text-black px-6 py-12 mt-16">
+        {/* {products.length ? return (<div >    sddas  </div>)} */}
+
         <h1 className="text-3xl font-bold  text-center mb-10">منتجاتنا</h1>
 
         <div className="flex justify-center items-center flex-wrap gap-8 ">
@@ -55,7 +58,7 @@ export default function Products() {
                 <div className="relative h-80 w-full overflow-hidden">
                   <Link href={`/selectedProductDetailsPage/${product.id}`}>
                     <img
-                      src={product.image}
+                      src={`https://localhost:7142${product.images[0]}`}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-500  rounded-bl-3xl cursor-pointer group-hover:scale-105"
                     />
@@ -80,7 +83,7 @@ export default function Products() {
                     <div className="flex justify-center mt-2 text-yellow-400 text-lg">
                       {Array.from({ length: 5 }).map((_, index) => (
                         <span key={index} className="text-2xl">
-                          {index < product.rating.rate ? "★" : "☆"}
+                          {index < product.averageRating ? "★" : "☆"}
                         </span>
                       ))}
                     </div>

@@ -136,18 +136,24 @@
 
 "use client";
 import { useAuth } from "@/app/context/AuthContext";
-import { useProducts } from "@/app/context/ProductsContext";
-import { M_PLUS_1 } from "next/font/google";
-import Link from "next/link";
+import {
+  Product,
+  ProductsContextType,
+  useProducts,
+} from "@/app/context/ProductsContext";
+import { useState } from "react";
 
 export default function ProductEditing({
   setOpenedSection,
+  setProductEditing,
 }: {
   setOpenedSection: (section: string) => void;
+  setProductEditing: (product: Product | null) => void;
 }) {
   const { products, setProducts, loading } = useProducts();
   const { user } = useAuth();
-  console.log("Products in ProductEditing:", products);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  // console.log("Products in ProductEditing:", products);
 
   async function handleDelete(id: number) {
     console.log("id from Editing", id);
@@ -174,6 +180,38 @@ export default function ProductEditing({
     }
   }
 
+  // async function handleUpdate(product: Product | null) {
+  //   if (!product) return;
+
+  //   try {
+  //     const res = await fetch(
+  //       `https://localhost:7142/api/Products/${product.id}`,
+  //       {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${user?.token}`,
+  //         },
+  //         body: JSON.stringify(product),
+  //       },
+  //     );
+
+  //     if (!res.ok) throw new Error("Update failed");
+
+  //     const updatedProduct = await res.json();
+
+  //     setProducts((prev) =>
+  //       prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
+  //     );
+
+  //     setEditingProduct(null);
+  //     alert("Product updated successfully");
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert("Error updating product");
+  //   }
+  // }
+
   // const [loading, setLoading] = useState(true);
 
   // useEffect(() => {
@@ -193,7 +231,7 @@ export default function ProductEditing({
     );
   }
   return (
-    <div className="flex justify-center items-center gap-10 flex-wrap mt-14">
+    <div className="flex justify-center items-center gap-10 flex-wrap mt-14 w-full">
       {products.map((product) => (
         <div
           key={product.id}
@@ -204,10 +242,7 @@ export default function ProductEditing({
           {/* Image Section */}
           <div className="relative h-80 w-full overflow-hidden">
             <img
-              onClick={() => {
-                setOpenedSection("EditingSpecificProduct");
-              }}
-              src={product.image}
+              src={`https://localhost:7142${product.images[0]}`}
               alt={product.name}
               className="w-full h-full object-cover transition-transform duration-500  rounded-bl-3xl cursor-pointer group-hover:scale-105"
             />
@@ -223,7 +258,7 @@ export default function ProductEditing({
           <div className="text-center flex flex-col grow justify-between">
             <div className="p-6">
               <h2 className="text-lg font-semibold tracking-wide text-white">
-                {product.category}
+                {product.name}
               </h2>
 
               {/* ⭐ Dynamic Stars */}
@@ -249,7 +284,11 @@ export default function ProductEditing({
           </div>
           <div className="mt-5 flex justify-center gap-3 flex-wrap">
             <button
-              // onClick={() => setOpenedSection("UpdateProduct")}
+              onClick={() => {
+                setOpenedSection("EditingSpecificProduct");
+                setProductEditing(product);
+                localStorage.setItem("editingProduct", JSON.stringify(product));
+              }}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
             >
               Update

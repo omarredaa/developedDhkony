@@ -64,7 +64,7 @@ export default function CartProducts() {
             </div>
 
             <img
-              src={item.image}
+              src={`https://localhost:7142${item.images[0]}`}
               alt={item.name}
               width={70}
               className="rounded-md"

@@ -27,7 +27,7 @@ export default function ProductDetails() {
         <div className="shrink-0">
           <img
             // src={product.image}
-            src={product.image}
+            src={`https://localhost:7142${product.images[0]}`}
             alt={product.name}
             className="rounded-md object-cover w-[360px]"
           />
@@ -49,7 +49,7 @@ export default function ProductDetails() {
               ))}
             </div>{" "}
             <p className="text-[#4c4645] text-sm">
-              بناءً على {product.rating.count} تقييم
+              بناءً على {product.reviews.length} تقييم
             </p>
             {/* Availability */}
             <p
@@ -74,7 +74,7 @@ export default function ProductDetails() {
           <div className="mt-3 w-full ">
             <div className="flex justify-center items-center gap-2 border border-dashed border-black rounded-xl p-3 text-sm md:text-base h-12">
               <span className="text-black font-medium">
-                يشتري هذا المنتج الآن {Math.round(product.rating.count / 4)} شخص
+                يشتري هذا المنتج الآن {Math.round(product.reviews.length)} شخص
               </span>
               <FaEye className="text-black" />
             </div>

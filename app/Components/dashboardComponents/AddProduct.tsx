@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { Upload, X } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
+import { useProducts } from "@/app/context/ProductsContext";
 
 export default function AddProduct() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-
+  const { setProducts } = useProducts();
   const [images, setImages] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -49,11 +50,6 @@ export default function AddProduct() {
       images.forEach((img) => {
         formData.append("images", img);
       });
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-      // console.log("TOKEN:", user?.token);
-      // console.log(user);
       const res = await fetch("https://localhost:7142/api/Products", {
         method: "POST",
         headers: {
@@ -61,15 +57,13 @@ export default function AddProduct() {
         },
         body: formData,
       });
-      console.log("Status:", res.status);
-
-      const text = await res.text();
-      console.log("API Response:", text);
       if (!res.ok) {
-        const errorText = await res.text();
-        console.log("API Error:", errorText);
-        throw new Error(errorText);
+        throw new Error("Upload failed");
       }
+
+      const newProduct = await res.json();
+
+      setProducts((prev) => [...prev, newProduct]);
 
       alert("✅ Product Uploaded");
 
