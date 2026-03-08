@@ -3,11 +3,21 @@
 import Link from "next/link";
 import CheckoutForm from "../Components/CheckoutForm";
 import OrderSummary from "../Components/OrderSummary";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useCart } from "../context/CartContext";
 export default function CheckoutPage() {
+  const [isCartEmpty, setIsCartEmpty] = useState(false);
+  const { cart } = useCart();
+
   useEffect(() => {
     document.body.style.overflow = "auto";
   }, []);
+
+  useEffect(() => {
+    if (!cart.length) {
+      setIsCartEmpty(true);
+    }
+  }, [cart.length]);
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-center flex-col py-10 text-black px-4">
       <Link href="/">
@@ -19,7 +29,7 @@ export default function CheckoutPage() {
       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Checkout Form */}
         <div className="md:col-span-2 bg-white shadow rounded-lg p-6 order-1">
-          <CheckoutForm />
+          <CheckoutForm isCartEmpty={isCartEmpty} />
         </div>
 
         {/* Order Summary */}

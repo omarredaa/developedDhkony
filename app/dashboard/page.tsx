@@ -14,6 +14,8 @@ import AnalysticComponent from "../Components/dashboardComponents/AnalysticCompo
 import EditingSpecificProduct from "../Components/dashboardComponents/EditingSpecificProduct";
 import AddProduct from "../Components/dashboardComponents/AddProduct";
 import { set } from "zod";
+import Link from "next/link";
+import Copons from "../Components/dashboardComponents/Copons";
 
 export default function Dashboard() {
   const [openedSection, setOpenedSection] = useState("dashboard");
@@ -40,7 +42,7 @@ export default function Dashboard() {
   // }, [productEditing]);
   return (
     <div className="min-h-screen flex bg-linear-to-br from-black via-zinc-900 to-black text-white">
-      <div className="md:hidden p-4">
+      <div className="md:hidden p-4 cursor-pointer text-3xl fixed z-20">
         <button onClick={() => setMobileMenuOpen(true)} className="text-white">
           ☰
         </button>
@@ -65,7 +67,7 @@ export default function Dashboard() {
 
         <nav className="space-y-4 text-white">
           <a
-            className="flex items-center gap-3 cursor-pointer hover:text-indigo-400"
+            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "dashboard" ? "text-indigo-400" : ""}`}
             onClick={() => {
               setOpenedSection("dashboard");
               setMobileMenuOpen(false);
@@ -75,7 +77,7 @@ export default function Dashboard() {
           </a>
 
           <a
-            className="flex items-center gap-3 cursor-pointer hover:text-indigo-400"
+            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "addproduct" ? "text-indigo-400" : ""}`}
             onClick={() => {
               setOpenedSection("addproduct");
               setMobileMenuOpen(false);
@@ -85,13 +87,31 @@ export default function Dashboard() {
           </a>
 
           <a
-            className="flex items-center gap-3 cursor-pointer hover:text-indigo-400"
+            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "products" ? "text-indigo-400" : ""}`}
             onClick={() => {
               setOpenedSection("products");
               setMobileMenuOpen(false);
             }}
           >
             <Package size={18} /> Products
+          </a>
+          <a
+            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "EditingSpecificProduct" ? "text-indigo-400" : ""}`}
+            onClick={() => {
+              setOpenedSection("EditingSpecificProduct");
+              setMobileMenuOpen(false);
+            }}
+          >
+            <FilePenLine /> Edit a Product
+          </a>
+          <a
+            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "analytics" ? "text-indigo-400" : ""}`}
+            onClick={() => {
+              setOpenedSection("analytics");
+              setMobileMenuOpen(false);
+            }}
+          >
+            <BarChart3 size={18} /> Analytics
           </a>
         </nav>
       </div>
@@ -100,7 +120,11 @@ export default function Dashboard() {
         <h2 className="text-2xl font-bold mb-10 flex items-center gap-2">
           <LayoutDashboard /> Admin
         </h2>
-
+        <Link href={"/"}>
+          <h2 className="text-2xl font-bold mb-10 flex items-center gap-2 hover:text-indigo-400">
+            Home
+          </h2>
+        </Link>
         <nav className="space-y-4">
           <a
             className={`flex items-center gap-3  hover:text-indigo-400 transition cursor-pointer ${openedSection === "dashboard" ? "text-indigo-400" : ""}`}
@@ -127,6 +151,12 @@ export default function Dashboard() {
             <FilePenLine /> Edit a Product
           </a>
           <a
+            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "copon" ? "text-indigo-400" : ""}`}
+            onClick={() => setOpenedSection("copon")}
+          >
+            <BarChart3 size={18} /> Copons
+          </a>
+          <a
             className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "analytics" ? "text-indigo-400" : ""}`}
             onClick={() => setOpenedSection("analytics")}
           >
@@ -137,12 +167,14 @@ export default function Dashboard() {
       {openedSection === "dashboard" ? (
         <DashboardComponent />
       ) : openedSection === "addproduct" ? (
-        <AddProduct />
+        <AddProduct setOpenedSection={setOpenedSection} />
       ) : openedSection === "products" ? (
         <ProductEditing
           setProductEditing={setProductEditing}
           setOpenedSection={setOpenedSection}
         />
+      ) : openedSection === "copon" ? (
+        <Copons />
       ) : openedSection === "EditingSpecificProduct" ? (
         <EditingSpecificProduct productEditing={productEditing} />
       ) : (

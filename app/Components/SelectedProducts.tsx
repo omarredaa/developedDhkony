@@ -109,7 +109,7 @@ export default function SelectedProducts({
               >
                 {/* Image */}
                 <img
-                  src={selectedProduct?.images[currentIndex]}
+                  src={`https://localhost:7142${selectedProduct.images[currentIndex]}`}
                   alt={selectedProduct?.name}
                   className="w-full h-80 object-cover transition-all duration-300"
                 />

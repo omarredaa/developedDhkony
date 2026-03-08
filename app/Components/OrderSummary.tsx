@@ -2,7 +2,9 @@
 import { useCart } from "@/app/context/CartContext";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { useState } from "react";
 import { FaTruckFast } from "react-icons/fa6";
+import Svg from "./Svg";
 
 export default function CartProducts() {
   const { cart, removeFromCart, changeQuantity, totalPrice } = useCart();
@@ -12,7 +14,7 @@ export default function CartProducts() {
       <div className="text-center py-20 text-gray-400 text-xl font-cairo">
         <Link href="/">
           <button className="mb-5 bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer ">
-            ضيف بعض المنتجات 🛒
+            أضف بعض المنتجات 🛒
           </button>
         </Link>{" "}
       </div>
@@ -80,10 +82,10 @@ export default function CartProducts() {
       <div>
         <div className="w-full max-w-md mx-auto rounded-xl p-4" dir="rtl">
           {/* Amount before discount */}
-          <div className="flex justify-between text-gray-700 mb-2">
+          {/* <div className="flex justify-between text-gray-700 mb-2">
             <span className="font-medium">المبلغ قبل الخصم:</span>
             <span>5000 ر.س</span>
-          </div>
+          </div> */}
 
           {/* Total including tax */}
           <div className="flex justify-between text-gray-900 font-bold pt-2">
@@ -93,7 +95,9 @@ export default function CartProducts() {
                 شامل الضريبة %15
               </span>
             </span>
-            <span>{totalPrice.toFixed(2)} ر.س </span>
+            <span>
+              {totalPrice.toFixed(2)} <Svg />
+            </span>
           </div>
           <div className="w-full max-w-md mx-auto space-y-4" dir="rtl">
             <div className="w-full max-w-md mx-auto mt-10" dir="rtl">
@@ -110,12 +114,6 @@ export default function CartProducts() {
                   تطبيق
                 </button>
               </div>
-
-              {/* Complete Order Button */}
-              <button className="w-full flex items-center justify-center gap-2 bg-[#2e2727] text-white font-semibold py-3 rounded-xl mt-4 text-2xl cursor-pointer">
-                <span>إتمام الطلب</span>
-                <FaTruckFast />
-              </button>
             </div>
           </div>
         </div>

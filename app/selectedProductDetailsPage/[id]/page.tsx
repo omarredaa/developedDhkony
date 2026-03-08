@@ -7,14 +7,34 @@ import Svg from "@/app/Components/Svg";
 import { FaEye } from "react-icons/fa6";
 import { useCart } from "@/app/context/CartContext";
 import NotFound from "@/app/Components/NotFound";
+import { useEffect, useState } from "react";
 
 export default function ProductDetails() {
   const { products } = useProducts();
   const { setCartOpen, addToCart } = useCart();
   const params = useParams();
 
+  const [numOfUsers, setNumOfUsers] = useState();
+
   const product = products.find((p) => p.id === Number(params.id));
   // console.log(product);
+
+  function generateRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  useEffect(() => {
+    setNumOfUsers(generateRandomNumber(30, 100));
+  }, []);
+
+  // Run every 15 minutes
+  setInterval(
+    () => {
+      const number = generateRandomNumber(30, 100);
+      setNumOfUsers(number);
+    },
+    2 * 60 * 1000,
+  ); // 15 minutes in milliseconds
 
   if (!product) return <NotFound />;
 
@@ -74,7 +94,7 @@ export default function ProductDetails() {
           <div className="mt-3 w-full ">
             <div className="flex justify-center items-center gap-2 border border-dashed border-black rounded-xl p-3 text-sm md:text-base h-12">
               <span className="text-black font-medium">
-                يشتري هذا المنتج الآن {Math.round(product.reviews.length)} شخص
+                يشتري هذا المنتج الآن {numOfUsers} شخص
               </span>
               <FaEye className="text-black" />
             </div>
@@ -84,7 +104,7 @@ export default function ProductDetails() {
               أو قسم فاتورتك على 4 دفعات بقيمة
               <p className="">
                 <Svg />
-                71.25
+                {product.price / 4}
               </p>
             </h2>
             <div className=" flex justify-center items-center gap-2 text-black">

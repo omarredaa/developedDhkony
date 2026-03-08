@@ -3,10 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { z } from "zod";
-
-/* ===============================
- Types
-=============================== */
+import { FaTruckFast } from "react-icons/fa6";
 
 type CheckoutData = {
   email: string;
@@ -17,10 +14,6 @@ type CheckoutData = {
   paymentMethod: string;
 };
 
-/* ===============================
- Schema Validation
-=============================== */
-
 const checkoutSchema = z.object({
   email: z.string().email("البريد الإلكتروني غير صالح"),
   phone: z.string().regex(/^[0-9+\s]{8,15}$/, "رقم الهاتف غير صحيح"),
@@ -30,16 +23,15 @@ const checkoutSchema = z.object({
   paymentMethod: z.string().min(1, "اختر طريقة الدفع"),
 });
 
-/* ===============================
- Component
-=============================== */
-
-export default function CheckoutForm() {
+export default function CheckoutForm({
+  isCartEmpty,
+}: {
+  isCartEmpty: boolean;
+}) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-
   const [errors, setErrors] = useState<Record<string, string>>({});
-
+  const [serverErrorMessage, setServerErrorMessage] = useState("");
   const [formData, setFormData] = useState<CheckoutData>({
     email: "",
     phone: "",
@@ -50,7 +42,7 @@ export default function CheckoutForm() {
   });
 
   /* ===============================
- LocalStorage Sync
+ LocalStorage
 =============================== */
 
   useEffect(() => {
@@ -63,7 +55,7 @@ export default function CheckoutForm() {
   }, [formData]);
 
   /* ===============================
- Realtime Validation
+ Validation
 =============================== */
 
   const validateField = (name: string, value: string) => {
@@ -82,10 +74,6 @@ export default function CheckoutForm() {
     }));
   };
 
-  /* ===============================
- Input Handler
-=============================== */
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -100,76 +88,66 @@ export default function CheckoutForm() {
   };
 
   /* ===============================
- Step Validation Engine
+ Form Validation
 =============================== */
 
-  const validateStep = (stepNumber: number) => {
-    let data: Partial<CheckoutData> = {};
+  const isFormValid = checkoutSchema.safeParse(formData).success;
 
-    if (stepNumber === 1) {
-      data = {
-        email: formData.email,
-        phone: formData.phone,
-      };
-    }
+  const step1Valid = checkoutSchema
+    .pick({ email: true, phone: true })
+    .safeParse(formData).success;
 
-    if (stepNumber === 2) {
-      data = {
-        country: formData.country,
-        city: formData.city,
-        address: formData.address,
-      };
-    }
+  const step2Valid = checkoutSchema
+    .pick({ country: true, city: true, address: true })
+    .safeParse(formData).success;
 
-    if (stepNumber === 3) {
-      data = {
-        paymentMethod: formData.paymentMethod,
-      };
-    }
-
-    const result = checkoutSchema.partial().safeParse(data);
-
-    if (!result.success) {
-      const newErrors: Record<string, string> = {};
-
-      result.error.issues.forEach((issue) => {
-        if (issue.path[0]) {
-          newErrors[issue.path[0] as string] =
-            issue.message ?? "خطأ في الإدخال";
-        }
-      });
-
-      setErrors(newErrors);
-      return false;
-    }
-
-    return true;
-  };
+  /* ===============================
+ Step Control
+=============================== */
 
   const nextStep = (targetStep: number) => {
-    if (!validateStep(targetStep - 1)) return;
+    if (targetStep === 2 && !step1Valid) return;
+    if (targetStep === 3 && !step2Valid) return;
+
     setStep(targetStep);
   };
 
   /* ===============================
- Submit Order (.NET Backend Ready)
+ Submit
 =============================== */
 
-  const handleSubmit = async () => {
-    if (!validateStep(3)) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isFormValid) return;
 
     try {
       setLoading(true);
 
-      const res = await fetch("https://your-dotnet-api.com/api/checkout", {
+      const apiData = {
+        name: formData.email.split("@")[0],
+        email: formData.email,
+        password: "123456",
+        number: formData.phone,
+        location: `${formData.country} - ${formData.city} - ${formData.address}`,
+        role: "User",
+      };
+
+      const res = await fetch("https://localhost:7142/api/Auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(apiData),
       });
 
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const text = await res.text();
+        if (text === "Email is taken")
+          setServerErrorMessage("This Email is already exist ");
+        console.log(text);
+        throw new Error();
+      }
 
       localStorage.removeItem("checkoutData");
 
@@ -181,16 +159,26 @@ export default function CheckoutForm() {
     }
   };
 
-  const progress = (step / 3) * 100;
+  /* ===============================
+ Progress
+=============================== */
+
+  let progress = 0;
+
+  if (step1Valid) progress = 33;
+  if (step1Valid && step2Valid) progress = 66;
+  if (isFormValid) progress = 100;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <form className="max-w-2xl mx-auto space-y-6" onSubmit={handleSubmit}>
       <div className="h-2 bg-gray-200 rounded overflow-hidden">
         <div
           className="h-full bg-black transition-all duration-500"
           style={{ width: `${progress}%` }}
         />
       </div>
+
+      {/* Step 1 */}
 
       <Section
         title="معلومات التواصل"
@@ -228,60 +216,54 @@ outline-none text-sm shadow-sm hover:border-gray-300"
         />
         {errors.phone && <ErrorText msg={errors.phone} />}
 
-        <NextButton onClick={() => nextStep(2)} />
+        <NextButton onClick={() => nextStep(2)} disabled={!step1Valid} />
       </Section>
+
+      {/* Step 2 */}
 
       <Section title="التوصيل" step={2} currentStep={step} setStep={setStep}>
         <div className="flex justify-end items-end flex-col gap-5">
-          {" "}
           <p className="font-extrabold">الدولة</p>
           <input
             name="country"
             value={formData.country}
             onChange={handleChange}
             placeholder="الدولة"
-            className="w-full p-4 rounded-xl border border-gray-200 
-bg-gray-50 
-focus:bg-white 
-focus:border-black 
-focus:ring-2 focus:ring-black/10 
-transition-all duration-300 
-outline-none text-sm shadow-sm hover:border-gray-300"
+            className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 
+focus:bg-white focus:border-black focus:ring-2 focus:ring-black/10 
+transition-all duration-300 outline-none text-sm shadow-sm hover:border-gray-300"
           />
           {errors.country && <ErrorText msg={errors.country} />}
+
           <p className="font-extrabold">المدينة</p>
           <input
             name="city"
             value={formData.city}
             onChange={handleChange}
             placeholder="المدينة"
-            className="w-full p-4 rounded-xl border border-gray-200 
-bg-gray-50 
-focus:bg-white 
-focus:border-black 
-focus:ring-2 focus:ring-black/10 
-transition-all duration-300 
-outline-none text-sm shadow-sm hover:border-gray-300"
+            className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 
+focus:bg-white focus:border-black focus:ring-2 focus:ring-black/10 
+transition-all duration-300 outline-none text-sm shadow-sm hover:border-gray-300"
           />
           {errors.city && <ErrorText msg={errors.city} />}
+
           <p className="font-extrabold">العنوان</p>
           <input
             name="address"
             value={formData.address}
             onChange={handleChange}
             placeholder="العنوان"
-            className="w-full p-4 rounded-xl border border-gray-200 
-bg-gray-50 
-focus:bg-white 
-focus:border-black 
-focus:ring-2 focus:ring-black/10 
-transition-all duration-300 
-outline-none text-sm shadow-sm hover:border-gray-300"
+            className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 
+focus:bg-white focus:border-black focus:ring-2 focus:ring-black/10 
+transition-all duration-300 outline-none text-sm shadow-sm hover:border-gray-300"
           />
           {errors.address && <ErrorText msg={errors.address} />}
-          <NextButton onClick={() => nextStep(3)} />
+
+          <NextButton onClick={() => nextStep(3)} disabled={!step2Valid} />
         </div>
       </Section>
+
+      {/* Step 3 */}
 
       <Section title="الدفع" step={3} currentStep={step} setStep={setStep}>
         <select
@@ -289,22 +271,34 @@ outline-none text-sm shadow-sm hover:border-gray-300"
           value={formData.paymentMethod}
           onChange={handleChange}
           className="w-full p-4 rounded-xl border border-gray-200 
-bg-gray-50 
-focus:bg-white 
-focus:border-black 
-focus:ring-2 focus:ring-black/10 
-transition-all duration-300 
+bg-gray-50 focus:bg-white focus:border-black 
+focus:ring-2 focus:ring-black/10 transition-all duration-300 
 outline-none text-sm shadow-sm hover:border-gray-300"
         >
           <option value="">اختر طريقة الدفع</option>
           <option value="credit">بطاقة ائتمان</option>
-          <option value="mada">مدى</option>
-          <option value="cod">الدفع عند الاستلام</option>
         </select>
 
         {errors.paymentMethod && <ErrorText msg={errors.paymentMethod} />}
       </Section>
-    </div>
+
+      {/* Submit */}
+      <p className="bg-red-400 text-sm"> {serverErrorMessage}</p>
+      <button
+        type="submit"
+        disabled={!isFormValid || isCartEmpty || loading}
+        className={`w-full flex items-center justify-center gap-2 
+  font-semibold py-3 rounded-xl mt-4 text-2xl
+  ${
+    !isFormValid || isCartEmpty || loading
+      ? "bg-gray-400 cursor-not-allowed opacity-60"
+      : "bg-[#2e2727] hover:bg-[#1f1a1a] cursor-pointer text-white"
+  }`}
+      >
+        <span>{loading ? "جارى المعالجة..." : "إتمام الطلب"}</span>
+        <FaTruckFast />
+      </button>
+    </form>
   );
 }
 
@@ -312,21 +306,7 @@ outline-none text-sm shadow-sm hover:border-gray-300"
  UI Components
 =============================== */
 
-interface SectionProps {
-  title: string;
-  step: number;
-  currentStep: number;
-  setStep: (step: number) => void;
-  children: React.ReactNode;
-}
-
-function Section({
-  title,
-  step,
-  currentStep,
-  setStep,
-  children,
-}: SectionProps) {
+function Section({ title, step, currentStep, setStep, children }: any) {
   return (
     <div className="border-b rounded-lg overflow-hidden text-black">
       <div
@@ -351,11 +331,24 @@ function Section({
   );
 }
 
-function NextButton({ onClick }: { onClick: () => void }) {
+function NextButton({
+  onClick,
+  disabled,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+}) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="w-full bg-black text-white p-3 rounded hover:opacity-90 transition"
+      disabled={disabled}
+      className={`w-full p-3 rounded transition
+      ${
+        disabled
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-black text-white hover:opacity-90 cursor-pointer"
+      }`}
     >
       متابعة
     </button>

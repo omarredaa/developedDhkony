@@ -142,6 +142,8 @@ import {
   useProducts,
 } from "@/app/context/ProductsContext";
 import { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2";
 
 export default function ProductEditing({
   setOpenedSection,
@@ -158,6 +160,16 @@ export default function ProductEditing({
   async function handleDelete(id: number) {
     console.log("id from Editing", id);
     console.log("token from Editing", user?.token);
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This product will be deleted",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!result.isConfirmed) return;
     try {
       const res = await fetch(`https://localhost:7142/api/Products/${id}`, {
         method: "DELETE",
@@ -167,62 +179,23 @@ export default function ProductEditing({
       });
 
       if (!res.ok) {
-        alert("Failed to delete product");
+        toast.error("Something went wrong ❌");
         throw new Error("Delete failed");
       }
 
       // Remove product from local context/state if available
       setProducts((prev) => prev.filter((product) => product.id !== id));
 
-      alert("Product deleted successfully");
+      toast.success("Product Deleted successfully 🎉");
     } catch (error) {
       console.error(error);
     }
   }
 
-  // async function handleUpdate(product: Product | null) {
-  //   if (!product) return;
-
-  //   try {
-  //     const res = await fetch(
-  //       `https://localhost:7142/api/Products/${product.id}`,
-  //       {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${user?.token}`,
-  //         },
-  //         body: JSON.stringify(product),
-  //       },
-  //     );
-
-  //     if (!res.ok) throw new Error("Update failed");
-
-  //     const updatedProduct = await res.json();
-
-  //     setProducts((prev) =>
-  //       prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
-  //     );
-
-  //     setEditingProduct(null);
-  //     alert("Product updated successfully");
-  //   } catch (error) {
-  //     console.error(error);
-  //     alert("Error updating product");
-  //   }
-  // }
-
-  // const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => setLoading(false), 1000); // 2s delay
-  //   return () => clearTimeout(timer);
-  // }, []);
-  // console.log(products);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen w-full bg-linear-to-br from-black via-zinc-900 to-black text-white">
+        <ToastContainer />
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
           <p className="text-white mt-4">Loading Products...</p>
@@ -289,14 +262,14 @@ export default function ProductEditing({
                 setProductEditing(product);
                 localStorage.setItem("editingProduct", JSON.stringify(product));
               }}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer"
             >
               Update
             </button>
 
             <button
               onClick={() => handleDelete(product.id)}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition cursor-pointer"
             >
               Delete
             </button>

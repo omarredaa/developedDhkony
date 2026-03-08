@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Upload, X } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
 import { useProducts } from "@/app/context/ProductsContext";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function AddProduct() {
+export default function AddProduct({ setOpenedSection }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -65,7 +67,7 @@ export default function AddProduct() {
 
       setProducts((prev) => [...prev, newProduct]);
 
-      alert("✅ Product Uploaded");
+      toast.success("Product added successfully 🎉");
 
       setName("");
       setDescription("");
@@ -73,15 +75,19 @@ export default function AddProduct() {
       setQuantity("");
       setImages([]);
       setPreviewImages([]);
+      setTimeout(() => {
+        setOpenedSection("products");
+      }, 2000);
     } catch (error) {
-      alert("❌ Upload failed");
+      toast.error("Something went wrong ❌");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#1b1b1b] flex justify-center text-white">
+    <div className="min-h-screen bg-[#1b1b1b] flex justify-center text-white w-full">
+      <ToastContainer />
       {/* Responsive container */}
       <div className="w-full max-w-screen-2xl px-4 sm:px-6 lg:px-10 py-10">
         <form
@@ -175,7 +181,7 @@ export default function AddProduct() {
           {/* Submit */}
           <button
             disabled={loading}
-            className="mt-10 w-full md:w-auto bg-[#d5bdad] text-black px-10 py-3 rounded-lg font-semibold hover:opacity-90 transition"
+            className="mt-10 w-full md:w-auto bg-[#d5bdad] text-black px-10 py-3 rounded-lg font-semibold hover:opacity-90 transition cursor-pointer"
           >
             {loading ? "Uploading..." : "Upload Product"}
           </button>

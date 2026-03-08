@@ -7,7 +7,8 @@ export type Product = {
   description: string;
   price: number;
   image: string;
-  quantity?: number;
+  quantity: number;
+  stock: number;
 };
 
 type CartContextType = {
@@ -47,19 +48,67 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [cart, mounted]);
 
+  // const addToCart = (product: Product) => {
+  //   setCart((prev) => {
+  //     const existing = prev.find((item) => item.id === product.id);
+
+  //     if (existing) {
+  //       return prev.map((item) =>
+  //         item.id === product.id
+  //           ? { ...item, quantity: (item.quantity || 1) + 1 }
+  //           : item,
+  //       );
+  //     }
+
+  //     return [...prev, { ...product, quantity: 1 }];
+  //   });
+  // };
+  // const addToCart = (product: Product) => {
+  //   setCart((prev) => {
+  //     const existing = prev.find((item) => item.id === product.id);
+
+  //     if (existing) {
+  //       if ((existing.quantity || 1) >= product.stock) {
+  //         alert("⚠️ لا يمكن إضافة أكثر من الكمية المتاحة");
+  //         return prev;
+  //       }
+
+  //       return prev.map((item) =>
+  //         item.id === product.id
+  //           ? { ...item, quantity: (item.quantity || 1) + 1 }
+  //           : item,
+  //       );
+  //     }
+
+  //     return [...prev, { ...product, quantity: 1 }];
+  //   });
+  // };
   const addToCart = (product: Product) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === product.id);
 
       if (existing) {
+        if (existing.quantity >= existing.stock) {
+          alert("⚠️ لا يمكن إضافة أكثر من الكمية المتاحة");
+          return prev;
+        }
+
         return prev.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: (item.quantity || 1) + 1 }
+            ? { ...item, quantity: item.quantity + 1 }
             : item,
         );
       }
 
-      return [...prev, { ...product, quantity: 1 }];
+      // 👇 هنا نضيف stock عند أول إضافة
+      return [
+        ...prev,
+        {
+          ...product,
+          quantity: 1, // الكمية في الكارت
+          stock: product.stock ?? product.quantity, // المخزون الحقيقي
+        },
+      ];
     });
   };
 
@@ -67,16 +116,37 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // const changeQuantity = (id: number, amount: number) => {
+  //   setCart((prev) =>
+  //     prev.map((item) =>
+  //       item.id === id
+  //         ? {
+  //             ...item,
+  //             quantity: Math.max(1, (item.quantity || 1) + amount),
+  //           }
+  //         : item,
+  //     ),
+  //   );
+  // };
   const changeQuantity = (id: number, amount: number) => {
     setCart((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: Math.max(1, (item.quantity || 1) + amount),
-            }
-          : item,
-      ),
+      prev.map((item) => {
+        if (item.id === id) {
+          const newQuantity = (item.quantity || 1) + amount;
+
+          if (newQuantity > item.stock) {
+            alert("⚠️ الكمية المطلوبة أكبر من المتوفر في المخزن");
+            return item;
+          }
+
+          return {
+            ...item,
+            quantity: Math.max(1, newQuantity),
+          };
+        }
+
+        return item;
+      }),
     );
   };
 

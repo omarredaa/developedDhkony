@@ -3,6 +3,7 @@ import { useCart } from "@/app/context/CartContext";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { FaTruckFast } from "react-icons/fa6";
+import Svg from "./Svg";
 
 export default function CartProducts() {
   const { cart, removeFromCart, changeQuantity, totalPrice } = useCart();
@@ -39,10 +40,12 @@ export default function CartProducts() {
               <div className="flex justify-center items-center gap-5">
                 {" "}
                 <p className="text-[#e94b4b]">
-                  ${item.price * (item.quantity || 1)}
+                  <Svg />
+                  {item.price * (item.quantity || 1)}
                 </p>
                 <p className="text-[#B0ABA8] line-through text-sm">
-                  ${item.oldPrice}
+                  <Svg />
+                  15000
                 </p>
               </div>
 
@@ -54,9 +57,16 @@ export default function CartProducts() {
                   –
                 </button>
                 <span className="mx-3 text-black">{item.quantity}</span>
-                <button
+                {/* <button
                   onClick={() => changeQuantity(item.id, 1)}
                   className="px-1 bg-[#b0aba8] text-xl rounded cursor-pointer"
+                >
+                  +
+                </button> */}
+                <button
+                  disabled={item.quantity >= item.stock}
+                  onClick={() => changeQuantity(item.id, 1)}
+                  className="px-1 bg-[#b0aba8] text-xl rounded cursor-pointer disabled:opacity-40"
                 >
                   +
                 </button>
@@ -76,10 +86,10 @@ export default function CartProducts() {
       <div>
         <div className="w-full max-w-md mx-auto rounded-xl p-4" dir="rtl">
           {/* Amount before discount */}
-          <div className="flex justify-between text-gray-700 mb-2">
+          {/* <div className="flex justify-between text-gray-700 mb-2">
             <span className="font-medium">المبلغ قبل الخصم:</span>
             <span>5000 ر.س</span>
-          </div>
+          </div> */}
 
           {/* Total including tax */}
           <div className="flex justify-between text-gray-900 font-bold pt-2">
@@ -89,7 +99,9 @@ export default function CartProducts() {
                 شامل الضريبة %15
               </span>
             </span>
-            <span>{totalPrice.toFixed(2)} ر.س </span>
+            <span>
+              {totalPrice.toFixed(2)} <Svg />
+            </span>
           </div>
           <div className="w-full max-w-md mx-auto space-y-4" dir="rtl">
             <div className="w-full max-w-md mx-auto mt-10" dir="rtl">

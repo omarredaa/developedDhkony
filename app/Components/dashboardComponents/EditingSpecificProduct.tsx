@@ -166,6 +166,7 @@ import { useState } from "react";
 import { Upload, X } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
 import { useProducts } from "@/app/context/ProductsContext";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function EditProduct({
   productEditing,
@@ -235,14 +236,29 @@ export default function EditProduct({
     if (!res.ok) {
       const text = await res.text();
       console.log(text);
+      toast.error("Something went wrong ❌");
       throw new Error("Update failed");
     }
 
-    alert("Product updated");
+    toast.success("Product Updated successfully 🎉");
+    setProducts((prevProducts) =>
+      prevProducts.map((p) =>
+        p.id === productEditing.id
+          ? {
+              ...p,
+              name,
+              description,
+              price,
+              quantity,
+            }
+          : p,
+      ),
+    );
   };
 
   return (
-    <div className="min-h-screen bg-[#1b1b1b] flex justify-center text-white">
+    <div className="min-h-screen bg-[#1b1b1b] flex justify-center text-white w-full">
+      <ToastContainer />
       <div className="w-full max-w-screen-2xl px-4 sm:px-6 lg:px-10 py-10">
         <form
           onSubmit={handleSubmit}
@@ -344,7 +360,7 @@ export default function EditProduct({
 
             <button
               disabled={loading}
-              className="bg-[#d5bdad] text-black px-10 py-3 rounded-lg font-semibold hover:opacity-90 transition"
+              className="bg-[#d5bdad] text-black px-10 py-3 rounded-lg font-semibold hover:opacity-90 transition cursor-pointer"
             >
               {loading ? "Updating..." : "Save Update"}
             </button>
