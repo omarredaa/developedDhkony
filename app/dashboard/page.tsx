@@ -16,6 +16,7 @@ import AddProduct from "../Components/dashboardComponents/AddProduct";
 import { set } from "zod";
 import Link from "next/link";
 import Copons from "../Components/dashboardComponents/Copons";
+import { FaTicketAlt } from "react-icons/fa";
 
 export default function Dashboard() {
   const [openedSection, setOpenedSection] = useState("dashboard");
@@ -105,6 +106,15 @@ export default function Dashboard() {
             <FilePenLine /> Edit a Product
           </a>
           <a
+            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "copon" ? "text-indigo-400" : ""}`}
+            onClick={() => {
+              setOpenedSection("copon");
+              setMobileMenuOpen(false);
+            }}
+          >
+            <FaTicketAlt size={22} className="text-yellow-400" /> Copons
+          </a>
+          <a
             className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "analytics" ? "text-indigo-400" : ""}`}
             onClick={() => {
               setOpenedSection("analytics");
@@ -154,7 +164,7 @@ export default function Dashboard() {
             className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "copon" ? "text-indigo-400" : ""}`}
             onClick={() => setOpenedSection("copon")}
           >
-            <BarChart3 size={18} /> Copons
+            <FaTicketAlt size={22} className="text-yellow-400" /> Copons
           </a>
           <a
             className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "analytics" ? "text-indigo-400" : ""}`}

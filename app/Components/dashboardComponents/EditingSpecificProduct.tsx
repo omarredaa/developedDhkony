@@ -201,12 +201,44 @@ export default function EditProduct({
     setPreviewImages((prev) => [...prev, ...previews]);
   };
 
-  const removeImage = (index: number) => {
-    const newPreview = [...previewImages];
-    newPreview.splice(index, 1);
-    setPreviewImages(newPreview);
-  };
+  const removeImage = async (index: number, imageUrl: string) => {
+    try {
+      // Extract the image path that your API expects
+      const imagePath = imageUrl.replace("https://localhost:7142", "");
 
+      // Call your API to delete the image
+      const res = await fetch(
+        `https://localhost:7142/api/Products/${productEditing.id}/Images`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: JSON.stringify({ imagePath }), // sending the image path to delete
+        },
+      );
+      toast.success("Image Deleted successfully ");
+      if (!res.ok) {
+        const text = await res.text();
+        console.log(text);
+        toast.error("Failed to delete image ❌");
+        return;
+      }
+
+      // If success, update previewImages and optionally remove from images array
+      setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+
+      // If the deleted image was newly uploaded but not yet sent to API,
+      // remove it from the `images` array too
+      setImages((prev) => prev.filter((_, i) => i !== index));
+
+      // toast.success("Image deleted ✅");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong ❌");
+    }
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -338,8 +370,8 @@ export default function EditProduct({
 
                   <button
                     type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-1 right-1 bg-red-500 p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                    onClick={() => removeImage(index, img)}
+                    className="absolute top-1 right-1 bg-red-500 p-1 rounded-full opacity-0 group-hover:opacity-100 transition cursor-pointer"
                   >
                     <X size={14} />
                   </button>
