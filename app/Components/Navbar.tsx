@@ -87,7 +87,7 @@ export default function Navbar() {
                   <LayoutDashboard size={22} className=" transition" />
                 </Link>
               )}
-              <Link href="/">
+              {/* <Link href="/">
                 <div className="flex justify-center items-center">
                   <p>الرئيسية </p>
                   <House />
@@ -98,15 +98,15 @@ export default function Navbar() {
                   <p>جميع المنتجات</p>
                   <SquareStack />
                 </div>
-              </Link>
-              <div className="hidden md:flex flex-row-reverse items-center backdrop-blur-md border border-black rounded-full px-4 py-2 w-1/2">
+              </Link> */}
+              {/* <div className="hidden md:flex flex-row-reverse items-center backdrop-blur-md border border-black rounded-full px-4 py-2 w-1/2">
                 <Search size={18} className="text-black" />
                 <input
                   type="text"
                   placeholder="ابحث عن منتجات..."
                   className="bg-transparent outline-none px-2 w-full text-sm placeholder-black text-right"
                 />
-              </div>
+              </div> */}
             </div>
             {/* Desktop Right Section */}
             <div className="flex items-center gap-6">

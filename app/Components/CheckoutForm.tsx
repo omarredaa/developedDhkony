@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import { z } from "zod";
 import { FaTruckFast } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
-import OtpLogin from "./OtpLogin";
+import { useCart } from "../context/CartContext";
+// import OtpLogin from "./OtpLogin";
 
 type CheckoutData = {
   email: string;
@@ -43,6 +44,7 @@ export default function CheckoutForm({
     address: "",
     paymentMethod: "",
   });
+  const { cart } = useCart();
   console.log("formData", formData);
 
   /* ===============================
@@ -141,7 +143,55 @@ export default function CheckoutForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // router.push("/success"); // Replace "/success" with your target page
+
+    let productsText = "";
+
+    cart.forEach((item: any, index: number) => {
+      productsText += `
+Product ${index + 1}
+Name: ${item.name}
+Description: ${item.description}
+Price: ${item.price}
+Quantity: ${item.quantity}
+Stock: ${item.stock}
+-----------------------
+`;
+    });
+    const message = `
+🧾 NEW ORDER
+
+Name: ${formData.email}
+Email: ${formData.email}
+Phone: ${formData.phone}
+
+Address:
+${formData.address}
+${formData.city}, ${formData.country}
+
+Payment Method: ${formData.paymentMethod}
+
+🛒 PRODUCTS
+${productsText}
+`;
+    console.log("message", message);
+    router.push("/payment"); // Replace "/success" with your target page
+    localStorage.setItem("dataSent to The bot", message);
+
+    try {
+      const response = await fetch("https://your-bot-endpoint.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(message),
+      });
+
+      const result = await response.json();
+
+      console.log("Bot response:", result);
+    } catch (error) {
+      console.error("Error sending data to bot:", error);
+    }
     // if (!isFormValid) return;
 
     // try {
@@ -229,7 +279,7 @@ export default function CheckoutForm({
           placeholder="رقم الهاتف"
           className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50"
         />
-        <OtpLogin />
+        {/* <OtpLogin /> */}
         {errors.phone && <ErrorText msg={errors.phone} />}
 
         <NextButton onClick={() => nextStep(2)} disabled={!step1Valid} />

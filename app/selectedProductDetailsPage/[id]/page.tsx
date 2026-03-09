@@ -12,6 +12,11 @@ import { useEffect, useState } from "react";
 export default function ProductDetails() {
   const { products } = useProducts();
   const { setCartOpen, addToCart } = useCart();
+  const [reviews, setReviews] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [reviewerName, setReviewerName] = useState("");
+
   const params = useParams();
 
   const [numOfUsers, setNumOfUsers] = useState();
@@ -19,9 +24,44 @@ export default function ProductDetails() {
   const product = products.find((p) => p.id === Number(params.id));
   // console.log(product);
 
+  useEffect(() => {
+    if (!params.id) return;
+
+    fetch(`https://localhost:7142/api/reviews/product/${params.id}`)
+      .then((res) => res.json())
+      .then((data) => setReviews(data))
+      .catch((err) => console.log(err));
+  }, [params.id]);
+
   function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
+
+  const handleAddReview = async () => {
+    const review = {
+      productId: Number(params.id),
+      rating,
+      comment,
+      reviewerName,
+    };
+
+    const res = await fetch("https://localhost:7142/api/reviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(review),
+    });
+
+    if (res.ok) {
+      const newReview = await res.json();
+      setReviews((prev) => [...prev, newReview]);
+
+      setRating(0);
+      setComment("");
+      setReviewerName("");
+    }
+  };
 
   useEffect(() => {
     setNumOfUsers(generateRandomNumber(30, 100));
@@ -39,7 +79,7 @@ export default function ProductDetails() {
   if (!product) return <NotFound />;
 
   return (
-    <div className="flex justify-center items-center bg-[#f9f5f2]">
+    <div className="flex justify-center items-center bg-[#f9f5f2] flex-col">
       <Navbar />
 
       <div className="mt-32  w-full  rounded-lg p-4 flex justify-evenly items-center md:items-start flex-col md:flex-row  gap-6">
@@ -64,7 +104,7 @@ export default function ProductDetails() {
             <div className="flex justify-center mt-2 text-yellow-400 text-lg">
               {Array.from({ length: 5 }).map((_, index) => (
                 <span key={index} className="text-2xl">
-                  {/* {index < product.rating ? "★" : "☆"} */}★
+                  {index < product.averageRating ? "★" : "☆"}
                 </span>
               ))}
             </div>{" "}
@@ -134,6 +174,84 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
+
+      <div className=" p-6 rounded-xl mt-8 text-center flex justify-center items-center flex-col font-semibold ">
+        <h1 className="text-gray-700 text-3xl font-extrabold">وصف المنتج</h1>
+        -----------------------------
+        <p className="whitespace-pre-line leading-relaxed text-gray-700  justify-center items-center">
+          {product.description}
+        </p>
+      </div>
+
+      <div className="w-full max-w-3xl mt-10 p-6 rounded-xl shadow-md mb-12">
+        <h2 className="text-xl font-bold mb-4  flex justify-center items-center">
+          التقييمات
+        </h2>
+
+        {reviews.length === 0 && (
+          <p className="text-gray-500 flex justify-center items-center">
+            لا يوجد تقييمات بعد
+          </p>
+        )}
+        <div className="flex flex-col justify-end items-center gap-5 w-full">
+          {reviews.map((review, index) => (
+            <div
+              key={index}
+              className="border-b py-4 bg-white p-5 rounded-3xl w-full flex justify-end items-between "
+            >
+              <div className="text-yellow-400">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span key={i}>{i < review.rating ? "★" : "☆"}</span>
+                ))}
+              </div>
+              <div className="flex justify-end items-end flex-col w-[80%]">
+                <p className="font-semibold  flex justify-end items-end text-right">
+                  {review.reviewerName}
+                </p>
+                <p className="text-gray-600 mt-1 flex justify-end items-end text-right">
+                  {review.comment}
+                </p>
+
+                {/* stars */}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* <div className="w-full max-w-3xl mt-8 bg-white p-6 rounded-xl shadow-md">
+        <h2 className="text-xl font-bold mb-4">أضف تقييمك</h2>
+
+        <input
+          type="text"
+          placeholder="اسمك"
+          value={reviewerName}
+          onChange={(e) => setReviewerName(e.target.value)}
+          className="border w-full p-2 rounded mb-3"
+        />
+
+        <textarea
+          placeholder="تعليقك"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          className="border w-full p-2 rounded mb-3"
+        />
+
+        {/* Rating Stars */}
+      {/* <div className="flex gap-2 text-2xl text-yellow-400 mb-4 cursor-pointer">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <span key={index} onClick={() => setRating(index + 1)}>
+              {index < rating ? "★" : "☆"}
+            </span>
+          ))}
+        </div>
+
+        <button
+          onClick={handleAddReview}
+          className="bg-black text-white px-6 py-2 rounded"
+        >
+          إرسال التقييم
+        </button>
+      </div>  */}
     </div>
   );
 }
