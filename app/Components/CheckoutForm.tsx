@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { z } from "zod";
 import { FaTruckFast } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
+import OtpLogin from "./OtpLogin";
 
 type CheckoutData = {
   email: string;
@@ -32,6 +34,7 @@ export default function CheckoutForm({
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverErrorMessage, setServerErrorMessage] = useState("");
+  const router = useRouter();
   const [formData, setFormData] = useState<CheckoutData>({
     email: "",
     phone: "",
@@ -40,23 +43,43 @@ export default function CheckoutForm({
     address: "",
     paymentMethod: "",
   });
+  console.log("formData", formData);
 
   /* ===============================
- LocalStorage
-=============================== */
+     Load from localStorage
+  =============================== */
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const saved = localStorage.getItem("checkoutData");
-    if (saved) setFormData(JSON.parse(saved));
+
+    if (saved) {
+      const parsed = JSON.parse(saved);
+
+      if (parsed.formData) setFormData(parsed.formData);
+      if (parsed.step) setStep(parsed.step);
+    }
   }, []);
 
+  /* ===============================
+     Save to localStorage
+  =============================== */
+
   useEffect(() => {
-    localStorage.setItem("checkoutData", JSON.stringify(formData));
-  }, [formData]);
+    if (typeof window === "undefined") return;
+
+    const data = {
+      formData,
+      step,
+    };
+
+    localStorage.setItem("checkoutData", JSON.stringify(data));
+  }, [formData, step]);
 
   /* ===============================
- Validation
-=============================== */
+     Validation
+  =============================== */
 
   const validateField = (name: string, value: string) => {
     const fieldSchema =
@@ -88,8 +111,8 @@ export default function CheckoutForm({
   };
 
   /* ===============================
- Form Validation
-=============================== */
+     Form Validation
+  =============================== */
 
   const isFormValid = checkoutSchema.safeParse(formData).success;
 
@@ -102,8 +125,8 @@ export default function CheckoutForm({
     .safeParse(formData).success;
 
   /* ===============================
- Step Control
-=============================== */
+     Step Control
+  =============================== */
 
   const nextStep = (targetStep: number) => {
     if (targetStep === 2 && !step1Valid) return;
@@ -113,55 +136,59 @@ export default function CheckoutForm({
   };
 
   /* ===============================
- Submit
-=============================== */
+     Submit
+  =============================== */
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // router.push("/success"); // Replace "/success" with your target page
+    // if (!isFormValid) return;
 
-    if (!isFormValid) return;
+    // try {
+    //   setLoading(true);
 
-    try {
-      setLoading(true);
+    //   const apiData = {
+    //     name: formData.email.split("@")[0],
+    //     email: formData.email,
+    //     password: "123456",
+    //     number: formData.phone,
+    //     location: `${formData.country} - ${formData.city} - ${formData.address}`,
+    //     role: "User",
+    //   };
 
-      const apiData = {
-        name: formData.email.split("@")[0],
-        email: formData.email,
-        password: "123456",
-        number: formData.phone,
-        location: `${formData.country} - ${formData.city} - ${formData.address}`,
-        role: "User",
-      };
+    //   const res = await fetch("https://localhost:7142/api/Auth/register", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(apiData),
+    //   });
 
-      const res = await fetch("https://localhost:7142/api/Auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(apiData),
-      });
+    //   if (!res.ok) {
+    //     const text = await res.text();
 
-      if (!res.ok) {
-        const text = await res.text();
-        if (text === "Email is taken")
-          setServerErrorMessage("This Email is already exist ");
-        console.log(text);
-        throw new Error();
-      }
+    //     if (text === "Email is taken") {
+    //       setServerErrorMessage("This Email already exists");
+    //     }
 
-      localStorage.removeItem("checkoutData");
+    //     throw new Error();
+    //   }
 
-      alert("تم تأكيد الطلب");
-    } catch {
-      alert("فشل إرسال الطلب");
-    } finally {
-      setLoading(false);
-    }
+    //   /* Clear localStorage after success */
+
+    //   localStorage.removeItem("checkoutData");
+
+    //   alert("تم تأكيد الطلب");
+    // } catch {
+    //   alert("فشل إرسال الطلب");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   /* ===============================
- Progress
-=============================== */
+     Progress
+  =============================== */
 
   let progress = 0;
 
@@ -191,13 +218,7 @@ export default function CheckoutForm({
           value={formData.email}
           onChange={handleChange}
           placeholder="البريد الإلكتروني"
-          className="w-full p-4 rounded-xl border border-gray-200 
-bg-gray-50 
-focus:bg-white 
-focus:border-black 
-focus:ring-2 focus:ring-black/10 
-transition-all duration-300 
-outline-none text-sm shadow-sm hover:border-gray-300"
+          className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50"
         />
         {errors.email && <ErrorText msg={errors.email} />}
 
@@ -206,14 +227,9 @@ outline-none text-sm shadow-sm hover:border-gray-300"
           value={formData.phone}
           onChange={handleChange}
           placeholder="رقم الهاتف"
-          className="w-full p-4 rounded-xl border border-gray-200 
-bg-gray-50 
-focus:bg-white 
-focus:border-black 
-focus:ring-2 focus:ring-black/10 
-transition-all duration-300 
-outline-none text-sm shadow-sm hover:border-gray-300"
+          className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50"
         />
+        <OtpLogin />
         {errors.phone && <ErrorText msg={errors.phone} />}
 
         <NextButton onClick={() => nextStep(2)} disabled={!step1Valid} />
@@ -222,45 +238,34 @@ outline-none text-sm shadow-sm hover:border-gray-300"
       {/* Step 2 */}
 
       <Section title="التوصيل" step={2} currentStep={step} setStep={setStep}>
-        <div className="flex justify-end items-end flex-col gap-5">
-          <p className="font-extrabold">الدولة</p>
-          <input
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-            placeholder="الدولة"
-            className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 
-focus:bg-white focus:border-black focus:ring-2 focus:ring-black/10 
-transition-all duration-300 outline-none text-sm shadow-sm hover:border-gray-300"
-          />
-          {errors.country && <ErrorText msg={errors.country} />}
+        <input
+          name="country"
+          value={formData.country}
+          onChange={handleChange}
+          placeholder="الدولة"
+          className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50"
+        />
+        {errors.country && <ErrorText msg={errors.country} />}
 
-          <p className="font-extrabold">المدينة</p>
-          <input
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            placeholder="المدينة"
-            className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 
-focus:bg-white focus:border-black focus:ring-2 focus:ring-black/10 
-transition-all duration-300 outline-none text-sm shadow-sm hover:border-gray-300"
-          />
-          {errors.city && <ErrorText msg={errors.city} />}
+        <input
+          name="city"
+          value={formData.city}
+          onChange={handleChange}
+          placeholder="المدينة"
+          className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50"
+        />
+        {errors.city && <ErrorText msg={errors.city} />}
 
-          <p className="font-extrabold">العنوان</p>
-          <input
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            placeholder="العنوان"
-            className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 
-focus:bg-white focus:border-black focus:ring-2 focus:ring-black/10 
-transition-all duration-300 outline-none text-sm shadow-sm hover:border-gray-300"
-          />
-          {errors.address && <ErrorText msg={errors.address} />}
+        <input
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          placeholder="العنوان"
+          className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50"
+        />
+        {errors.address && <ErrorText msg={errors.address} />}
 
-          <NextButton onClick={() => nextStep(3)} disabled={!step2Valid} />
-        </div>
+        <NextButton onClick={() => nextStep(3)} disabled={!step2Valid} />
       </Section>
 
       {/* Step 3 */}
@@ -270,10 +275,7 @@ transition-all duration-300 outline-none text-sm shadow-sm hover:border-gray-300
           name="paymentMethod"
           value={formData.paymentMethod}
           onChange={handleChange}
-          className="w-full p-4 rounded-xl border border-gray-200 
-bg-gray-50 focus:bg-white focus:border-black 
-focus:ring-2 focus:ring-black/10 transition-all duration-300 
-outline-none text-sm shadow-sm hover:border-gray-300"
+          className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50"
         >
           <option value="">اختر طريقة الدفع</option>
           <option value="credit">بطاقة ائتمان</option>
@@ -282,18 +284,17 @@ outline-none text-sm shadow-sm hover:border-gray-300"
         {errors.paymentMethod && <ErrorText msg={errors.paymentMethod} />}
       </Section>
 
-      {/* Submit */}
-      <p className="bg-red-400 text-sm"> {serverErrorMessage}</p>
+      <p className="bg-red-400 text-sm">{serverErrorMessage}</p>
+
       <button
         type="submit"
         disabled={!isFormValid || isCartEmpty || loading}
-        className={`w-full flex items-center justify-center gap-2 
-  font-semibold py-3 rounded-xl mt-4 text-2xl
-  ${
-    !isFormValid || isCartEmpty || loading
-      ? "bg-gray-400 cursor-not-allowed opacity-60"
-      : "bg-[#2e2727] hover:bg-[#1f1a1a] cursor-pointer text-white"
-  }`}
+        className={`w-full flex items-center justify-center gap-2 font-semibold py-3 rounded-xl mt-4 text-2xl
+        ${
+          !isFormValid || isCartEmpty || loading
+            ? "bg-gray-400 cursor-not-allowed opacity-60"
+            : "bg-[#2e2727] hover:bg-[#1f1a1a] cursor-pointer text-white"
+        }`}
       >
         <span>{loading ? "جارى المعالجة..." : "إتمام الطلب"}</span>
         <FaTruckFast />
@@ -302,9 +303,7 @@ outline-none text-sm shadow-sm hover:border-gray-300"
   );
 }
 
-/* ===============================
- UI Components
-=============================== */
+/* UI Components */
 
 function Section({ title, step, currentStep, setStep, children }: any) {
   return (

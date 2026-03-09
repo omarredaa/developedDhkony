@@ -144,6 +144,7 @@ import {
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
+import Svg from "../Svg";
 
 export default function ProductEditing({
   setOpenedSection,
@@ -246,11 +247,11 @@ export default function ProductEditing({
               {/* Price Section */}
               <div className="mt-3 flex justify-center items-center gap-3">
                 <span className="text-gray-400 line-through text-sm">
-                  1500 ج.م
+                  {product.oldPrice} <Svg />
                 </span>
 
                 <span className="text-red-500 font-bold text-lg">
-                  {product.price} ج.م
+                  {product.price} <Svg />
                 </span>
               </div>
             </div>

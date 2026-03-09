@@ -11,6 +11,7 @@ export default function AddProduct({ setOpenedSection }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [oldPrice, setOldPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const { setProducts } = useProducts();
   const [images, setImages] = useState<File[]>([]);
@@ -47,6 +48,7 @@ export default function AddProduct({ setOpenedSection }) {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
+      formData.append("oldPrice", oldPrice);
       formData.append("quantity", quantity);
 
       images.forEach((img) => {
@@ -65,6 +67,8 @@ export default function AddProduct({ setOpenedSection }) {
 
       const newProduct = await res.json();
 
+      // setProducts((prev) => [...prev, newProduct]);
+      // update UI with actual server paths
       setProducts((prev) => [...prev, newProduct]);
 
       toast.success("Product added successfully 🎉");
@@ -72,6 +76,7 @@ export default function AddProduct({ setOpenedSection }) {
       setName("");
       setDescription("");
       setPrice("");
+      setOldPrice("");
       setQuantity("");
       setImages([]);
       setPreviewImages([]);
@@ -112,6 +117,13 @@ export default function AddProduct({ setOpenedSection }) {
               onChange={(e) => setPrice(e.target.value)}
               type="number"
               placeholder="Price"
+              className="bg-[#1f1f1f] border border-[#3a3a3a] p-3 rounded-lg focus:border-[#d5bdad] outline-none"
+            />
+            <input
+              value={oldPrice}
+              onChange={(e) => setOldPrice(e.target.value)}
+              type="number"
+              placeholder="oldPrice"
               className="bg-[#1f1f1f] border border-[#3a3a3a] p-3 rounded-lg focus:border-[#d5bdad] outline-none"
             />
 
