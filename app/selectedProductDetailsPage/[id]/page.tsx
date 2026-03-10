@@ -8,6 +8,7 @@ import { FaEye } from "react-icons/fa6";
 import { useCart } from "@/app/context/CartContext";
 import NotFound from "@/app/Components/NotFound";
 import { useEffect, useState } from "react";
+import Footer from "@/app/Components/Footer";
 
 export default function ProductDetails() {
   const { products } = useProducts();
@@ -79,7 +80,7 @@ export default function ProductDetails() {
   if (!product) return <NotFound />;
 
   return (
-    <div className="flex justify-center items-center bg-[#f9f5f2] flex-col">
+    <div className="flex justify-center items-center bg-[#f9f5f2] flex-col overflow-hidden">
       <Navbar />
 
       <div className="mt-32  w-full  rounded-lg p-4 flex justify-evenly items-center md:items-start flex-col md:flex-row  gap-6">
@@ -175,10 +176,21 @@ export default function ProductDetails() {
         </div>
       </div>
 
-      <div className=" p-6 rounded-xl mt-8 text-center flex justify-center items-center flex-col font-semibold ">
+      {/* <div className=" p-6 rounded-xl mt-8 text-center flex justify-center items-center flex-col font-semibold text-wrap">
         <h1 className="text-gray-700 text-3xl font-extrabold">وصف المنتج</h1>
         -----------------------------
-        <p className="whitespace-pre-line leading-relaxed text-gray-700  justify-center items-center">
+        <p className="whitespace-pre-line leading-relaxed text-gray-700  justify-center items-center text-wrap">
+          {product.description}
+        </p>
+      </div> */}
+      <div className="p-6 rounded-xl mt-8 text-center flex flex-col justify-center items-center font-semibold max-w-full">
+        <h1 className="text-gray-700 text-2xl md:text-3xl font-extrabold">
+          وصف المنتج
+        </h1>
+
+        <div className="my-4 w-full border-t border-gray-300"></div>
+
+        <p className="whitespace-pre-line leading-relaxed text-gray-700 break-words max-w-full px-2">
           {product.description}
         </p>
       </div>
@@ -252,6 +264,7 @@ export default function ProductDetails() {
           إرسال التقييم
         </button>
       </div>  */}
+      <Footer />
     </div>
   );
 }

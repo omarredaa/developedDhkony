@@ -13,23 +13,29 @@ import ProductEditing from "../Components/dashboardComponents/ProductEditing";
 import AnalysticComponent from "../Components/dashboardComponents/AnalysticComponent";
 import EditingSpecificProduct from "../Components/dashboardComponents/EditingSpecificProduct";
 import AddProduct from "../Components/dashboardComponents/AddProduct";
+import GetProductsLinks from "../Components/dashboardComponents/GetProductsLinks";
 import { set } from "zod";
 import Link from "next/link";
 import Copons from "../Components/dashboardComponents/Copons";
 import { FaTicketAlt } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const [openedSection, setOpenedSection] = useState("dashboard");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [productEditing, setProductEditing] = useState(null);
-
+  const { user } = useAuth();
+  const route = useRouter();
   // Load from localStorage on mount
   useEffect(() => {
     const storedProduct = localStorage.getItem("productEditing");
     if (storedProduct) {
       setProductEditing(JSON.parse(storedProduct));
     }
-  }, []);
+    console.log("user", user);
+    if (user?.role !== "Admin") route.push("/");
+  }, [user]);
 
   // Save to localStorage whenever productEditing changes
   useEffect(() => {
@@ -42,154 +48,183 @@ export default function Dashboard() {
   //   setProductEditing(JSON.parse(localStorage.getItem("productEditing")));
   // }, [productEditing]);
   return (
-    <div className="min-h-screen flex bg-linear-to-br from-black via-zinc-900 to-black text-white">
-      <div className="md:hidden p-4 cursor-pointer text-3xl fixed z-20">
-        <button onClick={() => setMobileMenuOpen(true)} className="text-white">
-          ☰
-        </button>
-      </div>
-      {/* Mobile Sidebar Overlay */}
-      {mobileMenuOpen && (
+    user?.role === "Admin" && (
+      <div className="min-h-screen flex bg-linear-to-br from-black via-zinc-900 to-black text-white">
+        <div className="md:hidden p-4 cursor-pointer text-3xl fixed z-20">
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="text-white cursor-pointer"
+          >
+            ☰
+          </button>
+        </div>
+        {/* Mobile Sidebar Overlay */}
+        {mobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black/60 z-40 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
         <div
-          className="fixed inset-0 bg-black/60 z-40 md:hidden"
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
-      <div
-        className={`fixed top-0 left-0 h-full w-64 bg-black/90 backdrop-blur-xl p-6 z-50 transform transition-transform duration-300 md:hidden
+          className={`fixed top-0 left-0 h-full w-64 bg-black/90 backdrop-blur-xl p-6 z-50 transform transition-transform duration-300 md:hidden
   ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
-      >
-        <button
-          onClick={() => setMobileMenuOpen(false)}
-          className="mb-6 text-white text-xl"
         >
-          ✕
-        </button>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="mb-6 text-white text-xl cursor-pointer"
+          >
+            ✕
+          </button>
 
-        <nav className="space-y-4 text-white">
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "dashboard" ? "text-indigo-400" : ""}`}
-            onClick={() => {
-              setOpenedSection("dashboard");
-              setMobileMenuOpen(false);
-            }}
-          >
-            <LayoutDashboard size={18} /> Dashboard
-          </a>
+          <nav className="space-y-4 text-white">
+            <Link href={"/"}>
+              <h2 className="text-2xl font-bold mb-10 flex items-center gap-2 hover:text-indigo-400">
+                Home
+              </h2>
+            </Link>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "dashboard" ? "text-indigo-400" : ""}`}
+              onClick={() => {
+                setOpenedSection("dashboard");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <LayoutDashboard size={18} /> Dashboard
+            </a>
 
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "addproduct" ? "text-indigo-400" : ""}`}
-            onClick={() => {
-              setOpenedSection("addproduct");
-              setMobileMenuOpen(false);
-            }}
-          >
-            <CirclePlus /> Add product
-          </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "addproduct" ? "text-indigo-400" : ""}`}
+              onClick={() => {
+                setOpenedSection("addproduct");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <CirclePlus /> Add product
+            </a>
 
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "products" ? "text-indigo-400" : ""}`}
-            onClick={() => {
-              setOpenedSection("products");
-              setMobileMenuOpen(false);
-            }}
-          >
-            <Package size={18} /> Products
-          </a>
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "EditingSpecificProduct" ? "text-indigo-400" : ""}`}
-            onClick={() => {
-              setOpenedSection("EditingSpecificProduct");
-              setMobileMenuOpen(false);
-            }}
-          >
-            <FilePenLine /> Edit a Product
-          </a>
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "copon" ? "text-indigo-400" : ""}`}
-            onClick={() => {
-              setOpenedSection("copon");
-              setMobileMenuOpen(false);
-            }}
-          >
-            <FaTicketAlt size={22} className="text-yellow-400" /> Copons
-          </a>
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "analytics" ? "text-indigo-400" : ""}`}
-            onClick={() => {
-              setOpenedSection("analytics");
-              setMobileMenuOpen(false);
-            }}
-          >
-            <BarChart3 size={18} /> Analytics
-          </a>
-        </nav>
-      </div>
-      {/* Sidebar */}
-      <aside className="w-64 h-lvh bg-white/5 backdrop-blur-xl border-r border-white/10 p-6 hidden md:block sticky top-0 z-10">
-        <h2 className="text-2xl font-bold mb-10 flex items-center gap-2">
-          <LayoutDashboard /> Admin
-        </h2>
-        <Link href={"/"}>
-          <h2 className="text-2xl font-bold mb-10 flex items-center gap-2 hover:text-indigo-400">
-            Home
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "products" ? "text-indigo-400" : ""}`}
+              onClick={() => {
+                setOpenedSection("products");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <Package size={18} /> Products
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "EditingSpecificProduct" ? "text-indigo-400" : ""}`}
+              onClick={() => {
+                setOpenedSection("EditingSpecificProduct");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <FilePenLine /> Edit a Product
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "copon" ? "text-indigo-400" : ""}`}
+              onClick={() => {
+                setOpenedSection("copon");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <FaTicketAlt size={22} className="text-yellow-400" /> Copons
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "analytics" ? "text-indigo-400" : ""}`}
+              onClick={() => {
+                setOpenedSection("analytics");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <BarChart3 size={18} /> Analytics
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "getProductLinks" ? "text-indigo-400" : ""}`}
+              onClick={() => {
+                setOpenedSection("getProductLinks");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <BarChart3 size={18} /> Get Products Links
+            </a>
+          </nav>
+        </div>
+        {/* Sidebar */}
+        <aside className="w-64 h-lvh bg-white/5 backdrop-blur-xl border-r border-white/10 p-6 hidden md:block sticky top-0 z-10">
+          <h2 className="text-2xl font-bold mb-10 flex items-center gap-2">
+            <LayoutDashboard /> Admin
           </h2>
-        </Link>
-        <nav className="space-y-4">
-          <a
-            className={`flex items-center gap-3  hover:text-indigo-400 transition cursor-pointer ${openedSection === "dashboard" ? "text-indigo-400" : ""}`}
-            onClick={() => setOpenedSection("dashboard")}
-          >
-            <LayoutDashboard size={18} /> Dashboard
-          </a>
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "addproduct" ? "text-indigo-400" : ""}`}
-            onClick={() => setOpenedSection("addproduct")}
-          >
-            <CirclePlus /> Add product
-          </a>
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "products" ? "text-indigo-400" : ""}`}
-            onClick={() => setOpenedSection("products")}
-          >
-            <Package size={18} /> Products
-          </a>
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "EditingSpecificProduct" ? "text-indigo-400" : ""}`}
-            onClick={() => setOpenedSection("EditingSpecificProduct")}
-          >
-            <FilePenLine /> Edit a Product
-          </a>
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "copon" ? "text-indigo-400" : ""}`}
-            onClick={() => setOpenedSection("copon")}
-          >
-            <FaTicketAlt size={22} className="text-yellow-400" /> Copons
-          </a>
-          <a
-            className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "analytics" ? "text-indigo-400" : ""}`}
-            onClick={() => setOpenedSection("analytics")}
-          >
-            <BarChart3 size={18} /> Analytics
-          </a>
-        </nav>
-      </aside>
-      {openedSection === "dashboard" ? (
-        <DashboardComponent />
-      ) : openedSection === "addproduct" ? (
-        <AddProduct setOpenedSection={setOpenedSection} />
-      ) : openedSection === "products" ? (
-        <ProductEditing
-          setProductEditing={setProductEditing}
-          setOpenedSection={setOpenedSection}
-        />
-      ) : openedSection === "copon" ? (
-        <Copons />
-      ) : openedSection === "EditingSpecificProduct" ? (
-        <EditingSpecificProduct productEditing={productEditing} />
-      ) : (
-        <AnalysticComponent />
-      )}
-    </div>
+          <Link href={"/"}>
+            <h2 className="text-2xl font-bold mb-10 flex items-center gap-2 hover:text-indigo-400">
+              Home
+            </h2>
+          </Link>
+          <nav className="space-y-4">
+            <a
+              className={`flex items-center gap-3  hover:text-indigo-400 transition cursor-pointer ${openedSection === "dashboard" ? "text-indigo-400" : ""}`}
+              onClick={() => setOpenedSection("dashboard")}
+            >
+              <LayoutDashboard size={18} /> Dashboard
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "addproduct" ? "text-indigo-400" : ""}`}
+              onClick={() => setOpenedSection("addproduct")}
+            >
+              <CirclePlus /> Add product
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "products" ? "text-indigo-400" : ""}`}
+              onClick={() => setOpenedSection("products")}
+            >
+              <Package size={18} /> Products
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "EditingSpecificProduct" ? "text-indigo-400" : ""}`}
+              onClick={() => setOpenedSection("EditingSpecificProduct")}
+            >
+              <FilePenLine /> Edit a Product
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "copon" ? "text-indigo-400" : ""}`}
+              onClick={() => setOpenedSection("copon")}
+            >
+              <FaTicketAlt size={22} className="text-yellow-400" /> Copons
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "analytics" ? "text-indigo-400" : ""}`}
+              onClick={() => setOpenedSection("analytics")}
+            >
+              <BarChart3 size={18} /> Analytics
+            </a>
+            <a
+              className={`flex items-center gap-3 hover:text-indigo-400 transition cursor-pointer ${openedSection === "getProductLinks" ? "text-indigo-400" : ""}`}
+              onClick={() => {
+                setOpenedSection("getProductLinks");
+              }}
+            >
+              <BarChart3 size={18} /> Get Products Links
+            </a>
+          </nav>
+        </aside>
+        {openedSection === "dashboard" ? (
+          <DashboardComponent />
+        ) : openedSection === "addproduct" ? (
+          <AddProduct setOpenedSection={setOpenedSection} />
+        ) : openedSection === "products" ? (
+          <ProductEditing
+            setProductEditing={setProductEditing}
+            setOpenedSection={setOpenedSection}
+          />
+        ) : openedSection === "copon" ? (
+          <Copons />
+        ) : openedSection === "EditingSpecificProduct" ? (
+          <EditingSpecificProduct productEditing={productEditing} />
+        ) : openedSection === "getProductLinks" ? (
+          <GetProductsLinks />
+        ) : (
+          <AnalysticComponent />
+        )}
+      </div>
+    )
   );
 }

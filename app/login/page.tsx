@@ -8,6 +8,7 @@ import { useCart } from "../context/CartContext";
 export default function CheckoutPage() {
   const [isCartEmpty, setIsCartEmpty] = useState(false);
   const { cart } = useCart();
+  const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
     document.body.style.overflow = "auto";
@@ -29,12 +30,12 @@ export default function CheckoutPage() {
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Order Summary */}
         <div className="bg-white shadow rounded-lg p-6 order-1 lg:order-1 lg:col-span-1">
-          <OrderSummary />
+          <OrderSummary setDiscount={setDiscount} discount={discount} />
         </div>
 
         {/* Checkout Form */}
         <div className="bg-white shadow rounded-lg p-6 order-2 lg:order-2 lg:col-span-2">
-          <CheckoutForm isCartEmpty={isCartEmpty} />
+          <CheckoutForm isCartEmpty={isCartEmpty} discount={discount} />
         </div>
       </div>
     </div>

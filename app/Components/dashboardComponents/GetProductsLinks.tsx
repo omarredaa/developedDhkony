@@ -1,17 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import Navbar from "./Components/Navbar";
-import Products from "./Components/Products";
+import Navbar from "../Navbar";
+import Products from "../Products";
 import { BrowserRouter } from "react-router-dom";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push("/selectedProductDetailsPage/57");
-  }, []);
-
   // const [loading, setLoading] = useState(true);
   // // const [cartCount, setCartCount] = useState(0);
 
@@ -32,9 +26,8 @@ export default function Home() {
   // }
 
   return (
-    <div>
+    <div className="flex justify-center items-center w-full">
       <BrowserRouter>
-        <Navbar />
         <Products
         // setCartOpen={setCartOpen}
         />

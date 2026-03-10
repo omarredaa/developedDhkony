@@ -15,6 +15,7 @@ type CheckoutData = {
   city: string;
   address: string;
   paymentMethod: string;
+  name: string;
 };
 
 const checkoutSchema = z.object({
@@ -28,6 +29,7 @@ const checkoutSchema = z.object({
 
 export default function CheckoutForm({
   isCartEmpty,
+  discount,
 }: {
   isCartEmpty: boolean;
 }) {
@@ -44,11 +46,12 @@ export default function CheckoutForm({
     address: "",
     paymentMethod: "",
   });
-  const { cart } = useCart();
+  const { cart, totalPrice } = useCart();
   console.log("formData", formData);
+  console.log("cart", cart);
 
   /* ===============================
-     Load from localStorage
+    Load from localStorage
   =============================== */
 
   useEffect(() => {
@@ -65,7 +68,7 @@ export default function CheckoutForm({
   }, []);
 
   /* ===============================
-     Save to localStorage
+    Save to localStorage
   =============================== */
 
   useEffect(() => {
@@ -159,38 +162,85 @@ Stock: ${item.stock}
     });
     const message = `
 🧾 NEW ORDER
-
 Name: ${formData.email}
 Email: ${formData.email}
 Phone: ${formData.phone}
-
 Address:
 ${formData.address}
 ${formData.city}, ${formData.country}
-
 Payment Method: ${formData.paymentMethod}
-
 🛒 PRODUCTS
-${productsText}
+price :${cart[0].price}
+quantity : ${cart[0].quantity}
+discount: ${discount}
+total price before discount : ${cart[0].price * cart[0].quantity}
+total price after discount : ${(totalPrice - (totalPrice * discount) / 100).toFixed(2)}
 `;
     console.log("message", message);
     router.push("/payment"); // Replace "/success" with your target page
     localStorage.setItem("dataSent to The bot", message);
 
+    // try {
+    //   const response = await fetch("https://your-bot-endpoint.com", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(message),
+    //   });
+
+    //   const result = await response.json();
+
+    //   console.log("Bot response:", result);
+    // } catch (error) {
+    //   console.error("Error sending data to bot:", error);
+    // }
+    // try {
+    //   const response = await fetch(
+    //     "https://api.telegram.org/botYOUR_TOKEN/sendMessage",
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         chat_id: "8758821136",
+    //         text: "Hello from my website 🚀",
+    //       }),
+    //     },
+    //   );
+
+    //   const result = await response.json();
+
+    //   console.log("Bot response:", result);
+    // } catch (error) {
+    //   console.error("Error sending data to bot:", error);
+    // }
+
+    const token = "8758821136:AAH-ON6KCqjx1UB_6EpH1yi3S0SWIGkhDaY";
+    const chatId = "6032588551";
+
+    // const message = "Hello from my bot 🚀";
+
     try {
-      const response = await fetch("https://your-bot-endpoint.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `https://api.telegram.org/bot${token}/sendMessage`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+          }),
         },
-        body: JSON.stringify(message),
-      });
+      );
 
       const result = await response.json();
-
-      console.log("Bot response:", result);
+      console.log(result);
     } catch (error) {
-      console.error("Error sending data to bot:", error);
+      console.error(error);
     }
     // if (!isFormValid) return;
 

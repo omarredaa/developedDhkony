@@ -28,7 +28,6 @@ export default function LoginPage() {
       });
 
       const data = await res.json();
-      console.log(data);
       if (res.ok) {
         login({
           email: data.email,
