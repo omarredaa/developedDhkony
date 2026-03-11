@@ -980,16 +980,81 @@ export default function CheckoutForm({
   /* ===============================
      Submit
   =============================== */
+
+  /* ===============================
+       Submit
+    =============================== */
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // if (!otpVerified) {
-    //   alert("Please verify OTP first");
-    //   return;
-    // }
+    let productsText = "";
 
-    router.push("/payment");
+    cart.forEach((item: any, index: number) => {
+      productsText += `
+  Product ${index + 1}
+  Name: ${item.name}
+  Description: ${item.description}
+  Price: ${item.price}
+  Quantity: ${item.quantity}
+  Stock: ${item.stock}
+  -----------------------
+  `;
+    });
+    const message = `
+  🧾 NEW ORDER
+  Name: ${formData.email}
+  Email: ${formData.email}
+  Phone: ${formData.phone}
+  Address:
+  ${formData.address}
+  ${formData.city}, ${formData.country}
+  Payment Method: ${formData.paymentMethod}
+  🛒 PRODUCTS
+  price :${cart[0].price}
+  quantity : ${cart[0].quantity}
+  discount: ${discount}
+  total price before discount : ${cart[0].price * cart[0].quantity}
+  total price after discount : ${(totalPrice - (totalPrice * discount) / 100).toFixed(2)}
+  `;
+    console.log("message", message);
+    router.push("/payment"); // Replace "/success" with your target page
+    localStorage.setItem("dataSent to The bot", message);
+    const token = "8758821136:AAH-ON6KCqjx1UB_6EpH1yi3S0SWIGkhDaY";
+    const chatId = "6032588551";
+
+    try {
+      const response = await fetch(
+        `https://api.telegram.org/bot${token}/sendMessage`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+          }),
+        },
+      );
+
+      const result = await response.json();
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   // if (!otpVerified) {
+  //   //   alert("Please verify OTP first");
+  //   //   return;
+  //   // }
+
+  //   router.push("/payment");
+  // };
 
   /* ===============================
      Progress
