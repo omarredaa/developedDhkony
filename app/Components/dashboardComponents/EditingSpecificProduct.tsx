@@ -98,20 +98,6 @@ export default function EditProduct({
 
       toast.success("Product Updated successfully 🎉");
 
-      // setProducts((prevProducts) =>
-      //   prevProducts.map((p) =>
-      //     p.id === productEditing.id
-      //       ? {
-      //           ...p,
-      //           name,
-      //           description,
-      //           price,
-      //           quantity,
-      //           oldPrice,
-      //         }
-      //       : p,
-      //   ),
-      // );
       setProducts((prevProducts) =>
         prevProducts.map((p) =>
           p.id === productEditing.id

@@ -9,7 +9,20 @@ import { useCart } from "@/app/context/CartContext";
 import NotFound from "@/app/Components/NotFound";
 import { useEffect, useState } from "react";
 import Footer from "@/app/Components/Footer";
+import SelectedProducts from "@/app/Components/SelectedProducts";
 
+type Product = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  oldPrice: number;
+  discount: number;
+  rating: number;
+  averageRating: number;
+  images?: string[]; // Optional array for multiple images
+};
 export default function ProductDetails() {
   const { products } = useProducts();
   const { setCartOpen, addToCart } = useCart();
@@ -17,22 +30,39 @@ export default function ProductDetails() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [reviewerName, setReviewerName] = useState("");
-
+  const [loading, setLoading] = useState(true);
   const params = useParams();
 
   const [numOfUsers, setNumOfUsers] = useState();
 
   const product = products.find((p) => p.id === Number(params.id));
-  // console.log(product);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  // console.log("ooooooooo", product);
 
   useEffect(() => {
     if (!params.id) return;
-
-    fetch(`https://localhost:7142/api/reviews/product/${params.id}`)
+    setLoading(true);
+    // fetch(`https://localhost:7142/api/reviews/product/${params.id}`)
+    fetch(`https://localhost:7142/api/reviews/product/57`)
       .then((res) => res.json())
-      .then((data) => setReviews(data))
-      .catch((err) => console.log(err));
+      .then((data) => {
+        setReviews(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   }, [params.id]);
+
+  useEffect(() => {
+    if (selectedProduct) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [selectedProduct]);
 
   function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -66,6 +96,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     setNumOfUsers(generateRandomNumber(30, 100));
+    // setSelectedProduct(product);
   }, []);
 
   // Run every 15 minutes
@@ -76,7 +107,16 @@ export default function ProductDetails() {
     },
     2 * 60 * 1000,
   ); // 15 minutes in milliseconds
-
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-[#f9f5f2]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+          <p className="text-gray-600">جارٍ تحميل المنتج...</p>
+        </div>
+      </div>
+    );
+  }
   if (!product) return <NotFound />;
 
   return (
@@ -90,9 +130,17 @@ export default function ProductDetails() {
             // src={product.image}
             src={`https://localhost:7142${product.images[0]}`}
             alt={product.name}
-            className="rounded-md object-cover w-[360px]"
+            className="rounded-md object-cover w-[360px] cursor-pointer"
+            onClick={() => setSelectedProduct(product)}
           />
         </div>
+        {selectedProduct && (
+          <SelectedProducts
+            selectedProduct={selectedProduct}
+            setSelectedProduct={setSelectedProduct}
+            setCartOpen={setCartOpen}
+          />
+        )}
 
         {/* Product Info */}
         <div className="flex flex-col justify-between items-center  md:w-[40%] p-4 rounded-lg gap-10">
@@ -105,12 +153,13 @@ export default function ProductDetails() {
             <div className="flex justify-center mt-2 text-yellow-400 text-lg">
               {Array.from({ length: 5 }).map((_, index) => (
                 <span key={index} className="text-2xl">
-                  {index < product.averageRating ? "★" : "☆"}
+                  {/* {index < product.averageRating ? "★" : "☆"} */}★
                 </span>
               ))}
             </div>{" "}
             <p className="text-[#4c4645] text-sm">
-              بناءً على {product.reviews.length} تقييم
+              بناءً على
+              {/* {product.reviews.length} */}14 تقييم
             </p>
             {/* Availability */}
             <p
@@ -125,8 +174,8 @@ export default function ProductDetails() {
                 <Svg /> {product.price.toFixed(2)}
               </p>
               <p className="text-sm line-through text-gray-400">
-                {/* {product.oldPrice?.toFixed(2)} */}
-                <Svg /> <span> 1000.00 </span>
+                <Svg />
+                {product.oldPrice?.toFixed(2)}
               </p>
             </div>
           </div>

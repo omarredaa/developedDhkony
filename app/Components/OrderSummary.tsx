@@ -12,15 +12,15 @@ export default function CartProducts({ setDiscount, discount }) {
 
   const [coupon, setCoupon] = useState("");
 
-  useEffect(() => {
-    const savedCoupon = localStorage.getItem("couponData");
+  // useEffect(() => {
+  //   // const savedCoupon = localStorage.getItem("couponData");
 
-    if (savedCoupon) {
-      const parsed = JSON.parse(savedCoupon);
-      setCoupon(parsed.coupon);
-      setDiscount(parsed.discount);
-    }
-  }, []);
+  //   if (savedCoupon) {
+  //     const parsed = JSON.parse(savedCoupon);
+  //     setCoupon(parsed.coupon);
+  //     setDiscount(parsed.discount);
+  //   }
+  // }, []);
 
   const handleApplyCoupon = async () => {
     if (!coupon) return toast.error("Please enter a coupon code ❌");
