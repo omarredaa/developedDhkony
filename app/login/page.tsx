@@ -21,11 +21,16 @@ export default function CheckoutPage() {
   }, [cart.length]);
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-center flex-col py-10 text-black px-4">
-      <Link href="/">
+      {/* <Link href="/">
         <button className="mb-5 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer ">
           العودة للصفحة الرئيسية
         </button>
-      </Link>
+      </Link> */}
+      <div className="flex items-center justify-center w-full border-b">
+        <Link href="/">
+          <img src="/logo.png" alt="logo" className="w-16 cursor-pointer" />
+        </Link>
+      </div>
 
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Order Summary */}

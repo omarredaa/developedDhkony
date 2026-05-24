@@ -45,7 +45,7 @@ export default function CartProducts() {
                 </p>
                 <p className="text-[#B0ABA8] line-through text-sm">
                   <Svg />
-                  15000
+                  {item.oldPrice}
                 </p>
               </div>
 

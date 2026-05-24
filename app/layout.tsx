@@ -6,16 +6,17 @@ import { CartProvider } from "./context/CartContext";
 import { Cairo } from "next/font/google";
 import { ProductsProvider } from "./context/ProductsContext";
 import { AuthProvider } from "./context/AuthContext";
+import LearnProvider from "./learningReact/learnContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
   title: "Dkhony",
@@ -23,28 +24,45 @@ export const metadata: Metadata = {
   icons: {
     icon: "/logo.png",
   },
+  openGraph: {
+    type: "website",
+    locale: "ar_EG",
+    siteName: "Dkhony",
+    title: "Dhony",
+    description: "عطور - فوحان -ثبات",
+    url: "https://dkhonemiraates.com/",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Dhkony",
+      },
+    ],
+  },
 };
 
 const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  weight: ["300", "400", "600", "700"],
-  variable: "--font-cairo",
+  subsets: ["arabic"],
+  weight: ["400", "600", "700"],
 });
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased ${cairo.variable} font-sans `}
-      >
-        <AuthProvider>
-          <ProductsProvider>
-            <CartProvider>{children}</CartProvider>{" "}
-          </ProductsProvider>
-        </AuthProvider>
+    <html lang="ar">
+      <link rel="icon" href="/logo.png" />
+      <body className={`${cairo.className} `}>
+        <LearnProvider>
+          <AuthProvider>
+            <ProductsProvider>
+              <CartProvider>{children}</CartProvider>{" "}
+            </ProductsProvider>
+          </AuthProvider>
+        </LearnProvider>
       </body>
     </html>
   );

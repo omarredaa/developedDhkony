@@ -76,7 +76,10 @@ export default function Copons() {
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
+        console.error("API Error:", data); // 🔥 full error from backend
         toast.error("Something went wrong ❌");
         return;
       }

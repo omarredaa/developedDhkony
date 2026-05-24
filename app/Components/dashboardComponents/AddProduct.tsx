@@ -52,7 +52,7 @@ export default function AddProduct({ setOpenedSection }) {
       formData.append("quantity", quantity);
 
       images.forEach((img) => {
-        formData.append("images", img);
+        formData.append("Images", img);
       });
       const res = await fetch("https://localhost:7142/api/Products", {
         method: "POST",

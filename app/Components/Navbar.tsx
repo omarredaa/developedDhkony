@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   SquareStack,
   House,
+  ShoppingBag,
 } from "lucide-react";
 import CartProducts from "./CartProducts";
 import { useCart } from "../context/CartContext";
@@ -36,14 +37,14 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed w-full top-0 z-50 backdrop-blur-xl bg-[#d5bdad] border-b border-white/10 text-mist-800 h-24 text-sm rounded-b-3xl">
+      <nav className="fixed w-full top-0 z-50 backdrop-blur-xl bg-[#d5bdad] border-b border-white/10 text-mist-800 h-20 text-sm">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16 mt-3.5 font-bold">
             <button
               onClick={() => setCartOpen(true)}
               className="relative cursor-pointer"
             >
-              <ShoppingCart size={30} className=" transition" />
+              <ShoppingBag size={30} className=" transition" />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-mist-800 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full shadow-lg shadow-indigo-600/40">
                   {cartCount}
@@ -113,7 +114,7 @@ export default function Navbar() {
               {/* Cart Button */}
 
               <Link href="/" className="text-2xl font-bold  tracking-wide">
-                <img src="/logo.png" alt="Logo" className="h-32 w-auto " />
+                <img src="/logo.png" alt="Logo" className="w-24 " />
               </Link>
             </div>
             {/* Mobile Menu Button */}

@@ -14,14 +14,22 @@ import {
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="flex justify-center items-center">
-      <div className="bg-[#2b201f] text-white rounded-t-4xl p-32 w-full">
+    // <footer className="flex justify-center items-center ">
+    //   <div className="bg-[#2e2727] text-white rounded-t-4xl p-16 w-full">
+    <footer className="w-full flex justify-center items-center">
+      <div className="bg-[#2e2727] text-white rounded-t-4xl overflow-hidden w-full px-6 md:px-16 pt-16">
         {/* Top Grid */}
-        <div className="flex justify-evenly w-lvw items-center flex-col md:flex-row gap-20 ">
+        {/* <div className="flex justify-evenly w-lvw items-center flex-col md:flex-row gap-20 "> */}
+        <div className="flex justify-evenly w-full items-center flex-col md:flex-row gap-20">
           {/* Logo + Social */}
           <div className="flex justify-center items-center flex-col gap-10">
             <div className="">
-              <Image src="/whiteLogo.png" alt="logo" width={200} height={40} />
+              <Image
+                src="/footerloger.png"
+                alt="logo"
+                width={130}
+                height={40}
+              />
             </div>
 
             <div className=" flex gap-2">
@@ -103,7 +111,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="text-center text-sm text-gray-300 mt-36">
+        {/* <div className="text-center text-sm text-gray-300 mt-36"> */}
+        <div className="text-center text-sm text-gray-300 mt-16">
           جميع الحقوق محفوظة لدخوني © {year}
         </div>
       </div>
